@@ -9,6 +9,21 @@ include_once 'data/GetEmailDispositionResponse.php';
 
 class EmailService
 {
+    private function getURL($uri){
+        $baseUrl="https://api.paubox.net/v1/";
+        $baseUrl .= \Constants::$API_USER;
+        $baseUrl .="/";
+        $baseUrl .= $uri;
+        return $baseUrl;
+    }
+    
+    private function getAuthentication(){
+        $token="Token token=";
+        $token .= \Constants::$API_KEY;
+        
+        return $token;
+    }
+    
     public function SendEmail(Message $message)    
     {
         try 
@@ -63,9 +78,9 @@ class EmailService
     function getEmailDisposition($sourceTrackingId)
     {
         $api = new \ApiHelper();
-        $uri = "https://api.paubox.net/v1/undefeatedgames/message_receipt?sourceTrackingId=";
+        $uri = "message_receipt?sourceTrackingId=";
         $uri .= $sourceTrackingId;
-        $resp = $api->callToAPIByGet($uri, "Token token=6f7c0110a47f82e7bff933f68cc8d7ec");
+        $resp = $api->callToAPIByGet(EmailService::getURL($uri), EmailService::getAuthentication());
         $emailDisposition = new GetEmailDispositionResponse();
         $emailDisposition = json_decode($resp);
         if(is_null($emailDisposition) && is_null($emailDisposition->data) &&

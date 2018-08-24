@@ -12,6 +12,7 @@ include('./data/Message.php');
 include('./data/Content.php');
 include('./data/Header.php');
 include('./data/Attachment.php');
+include_once 'config/ConfigurationManager.php';
 
 $message = new Message(); 
 $message->setRecipients(["vighneshtrivedi2004@gmail.com"]);
@@ -38,7 +39,7 @@ $service=new EmailService();
 
 $resp = $service->SendEmail($message);
 
-
+ConfigurationManager::getProperties("E:/projects/paubox-php/Paubox_PHP/config.ini");
 $resp= $service->getEmailDisposition("97b18032-59d5-47c7-a7c6-a2ed27f0f44e");
 print_r($resp);
 
