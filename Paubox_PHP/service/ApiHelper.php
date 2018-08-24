@@ -1,6 +1,6 @@
 <?php
 
-include 'phar://E:/Dropbox/GENESYSBUZZ/Paubox REST API project/httpful.phar/';
+include('./httpful.phar');
 
 class ApiHelper
 {
