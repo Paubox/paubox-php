@@ -1,6 +1,4 @@
 <?php
-namespace service;
-
 include('./httpful.phar');
 
 class ApiHelper
