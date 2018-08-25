@@ -8,44 +8,44 @@ namespace data;
  */
 class Errors
 {
-    private $_code;
-    private $_title;
-    private $_details;
+    private $code;
+    private $title;
+    private $details;
     /**
      * @return $_code
      */
     public function  getCode() {
-        return $this->_code;
+        return $this->code;
     }
     /**
      * @param code the code to set
      */
     public function setCode($code) {
-        $this->_code = $code;
+        $this->code = $code;
     }
     /**
      * @return $_title
      */
     public function getTitle() {
-        return $this->_title;
+        return $this->title;
     }
     /**
      * @param title the title to set
      */
     public function setTitle($title) {
-        $this->_title = $title;
+        $this->title = $title;
     }
     /**
      * @return $_details
      */
     public function getDetails() {
-        return $this->_details;
+        return $this->details;
     }
     /**
      * @param details the details to set
      */
     public function setDetails($details) {
-        $this->_details = $details;
+        $this->details = $details;
     }
     
 }

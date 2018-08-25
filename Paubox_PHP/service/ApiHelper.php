@@ -1,4 +1,5 @@
 <?php
+namespace service;
 
 include('./httpful.phar');
 
@@ -20,9 +21,8 @@ class ApiHelper
             ->addHeaders($header)
             ->body($requestBody)
             ->send();
-
-        echo $response;
-        return $response;
+        
+        return $response->raw_body;
     }
     
     function callToAPIByGet($uri,$authHeader) {
@@ -37,7 +37,7 @@ class ApiHelper
         ->addHeaders($header)
         ->send();
         
-        return  $response;
+        return  $response->raw_body;
     }
 }
 

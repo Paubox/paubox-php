@@ -1,17 +1,17 @@
 <?php
-namespace Model;
+namespace data;
 
 class Attachment
 {
-    private $fileName;
-    private $contentType;
-    private $content;
+    private $_fileName;
+    private $_contentType;
+    private $_content;
     /**
      * @return mixed
      */
     public function getFileName()
     {
-        return $this->fileName;
+        return $this->_fileName;
     }
 
     /**
@@ -19,7 +19,7 @@ class Attachment
      */
     public function setFileName($fileName)
     {
-        $this->fileName = $fileName;
+        $this->_fileName = $fileName;
     }
 
     /**
@@ -27,7 +27,7 @@ class Attachment
      */
     public function getContentType()
     {
-        return $this->contentType;
+        return $this->_contentType;
     }
 
     /**
@@ -35,7 +35,7 @@ class Attachment
      */
     public function setContentType($contentType)
     {
-        $this->contentType = $contentType;
+        $this->_contentType = $contentType;
     }
 
     /**
@@ -43,7 +43,7 @@ class Attachment
      */
     public function getContent()
     {
-        return $this->content;
+        return $this->_content;
     }
 
     /**
@@ -51,7 +51,7 @@ class Attachment
      */
     public function setContent($content)
     {
-        $this->content = $content;
+        $this->_content = $content;
     }
 
 }
