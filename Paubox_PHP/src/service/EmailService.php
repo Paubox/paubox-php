@@ -1,11 +1,13 @@
 <?php
 namespace service;
 
-use Model\Message;
+use data\Message;
 use data\GetEmailDispositionResponse;
+use data\SendMessageResponse;
 
 include_once 'service/ApiHelper.php';
 include_once 'data/GetEmailDispositionResponse.php';
+include_once 'data/SendMessageResponse.php';
 
 class EmailService
 {
@@ -24,9 +26,9 @@ class EmailService
         return $token;
     }
     
-    public function SendEmail(Message $message)    
+    public function SendMessage(Message $message)
     {
-        try 
+        try
         {
             $header = $message->getHeader();
             $content = $message->getContent();
@@ -35,45 +37,62 @@ class EmailService
             if($header==null)
                 throw new \Exception("Message Header cannot be null.");
                 
-            if($content==null)
-                throw new \Exception("Message Content cannot be null.");
+                if($content==null)
+                    throw new \Exception("Message Content cannot be null.");
                     
-            $jsonData = array (
-                'data' => array (
-                    'message' => array (
-                        'recipients' => $message->getRecipients(),
-                        'bcc' => $message->getBcc(),                        
-                        'headers' => array (
-                            'subject' => $header->getSubject(),
-                            'from' => $header->getFrom(),
-                            'reply-to' => $header->getReplyTo()
-                        ),
-                        'allowNonTLS' => $message->isAllowNonTLS(),
-                        'content' => array (
-                            'text/plain' => $content->getPlainText(),
-                            'text/html' =>  $content->getHtmlText(),
-                        ),
-                        'attachments' => array ($message->getAttachments())
-                        /* 'attachments' => array ( */
-                            /* array(
-                                'fileName' => $attachment->getFileName(),                            
-                                'contentType' => $attachment->getContentType(),
-                                "content" => $attachment->getContent()
-                            ) 
-                        ),    */                    
-                    )
-                )
-            );
+                    $jsonAttachmentsArray = array();
                     
-            $api = new \ApiHelper();
-            $resp = $api->callToAPIByPost("https://api.paubox.net/v1/undefeatedgames/messages", "Token token=6f7c0110a47f82e7bff933f68cc8d7ec", $jsonData);
-            return $resp;
-            
-        } catch (\Exception $e) {
+                    foreach ($message->getAttachments() as $attachment)
+                    {
+                        $jsonattachment= array(
+                            'fileName' => $attachment->getFileName(),
+                            'contentType' => $attachment->getContentType(),
+                            'content' => $attachment->getContent()
+                        );
+                        array_push($jsonAttachmentsArray, $jsonattachment);
+                    }
+                    
+                    
+                    $jsonRequestData = array (
+                        'data' => array (
+                            'message' => array (
+                                'recipients' => $message->getRecipients(),
+                                'bcc' => $message->getBcc(),
+                                'headers' => array (
+                                    'subject' => $header->getSubject(),
+                                    'from' => $header->getFrom(),
+                                    'reply-to' => $header->getReplyTo()
+                                ),
+                                'allowNonTLS' => $message->isAllowNonTLS(),
+                                'content' => array (
+                                    'text/plain' => $content->getPlainText(),
+                                    'text/html' =>  $content->getHtmlText(),
+                                ),
+                                'attachments' => $jsonAttachmentsArray
+                            )
+                        )
+                    );
+                    $uri = "messages";
+                    
+                    $api = new \ApiHelper();
+                    $resp = $api->callToAPIByPost(EmailService::getURL($uri), EmailService::getAuthentication(), $jsonRequestData);
+                    
+                    $sendMessageResponse = new SendMessageResponse();
+                    $sendMessageResponse = json_decode($resp);
+                    
+                    if(is_null($sendMessageResponse) && is_null($sendMessageResponse->data) &&
+                        is_null($sendMessageResponse->sourceTrackingId) &&
+                        is_null($sendMessageResponse->errors))
+                    {
+                        throw new \Exception($resp);
+                    }
+        }
+        catch (\Exception $e) {
             throw $e;
         }
+        return $sendMessageResponse;
         
-    }       
+    }      
 
     function getEmailDisposition($sourceTrackingId)
     {

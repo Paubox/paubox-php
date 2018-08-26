@@ -1,21 +1,22 @@
 <?php
-namespace Model;
+namespace data;
 
 
 class Message 
 {
-    private $recipients = array();
-    private $bcc = array();
-    private $header;
-    private $allowNonTLS = false;
-    private $content;
-    private $attachments  = array();
+    private $_recipients = array();
+    private $_bcc = array();
+    private $_header;
+    private $_allowNonTLS = false;
+    private $_content;
+    private $_attachments  = array();
+    
     /**
      * @return mixed
      */
     public function getRecipients()
     {
-        return $this->recipients;
+        return $this->_recipients;
     }
 
     /**
@@ -23,7 +24,7 @@ class Message
      */
     public function setRecipients(array $recipients)
     {
-        $this->recipients = $recipients;
+        $this->_recipients = $recipients;
     }
 
     /**
@@ -31,7 +32,7 @@ class Message
      */
     public function getBcc()
     {
-        return $this->bcc;
+        return $this->_bcc;
     }
 
     /**
@@ -39,7 +40,7 @@ class Message
      */
     public function setBcc(array $bcc)
     {
-        $this->bcc = $bcc;
+        $this->_bcc = $bcc;
     }
 
     /**
@@ -47,7 +48,7 @@ class Message
      */
     public function getHeader()
     {
-        return $this->header;
+        return $this->_header;
     }
 
     /**
@@ -55,7 +56,7 @@ class Message
      */
     public function setHeader(Header $header)
     {
-        $this->header = $header;
+        $this->_header = $header;
     }
 
     /**
@@ -63,7 +64,7 @@ class Message
      */
     public function isAllowNonTLS()
     {
-        return $this->allowNonTLS;
+        return $this->_allowNonTLS;
     }
 
     /**
@@ -71,7 +72,7 @@ class Message
      */
     public function setAllowNonTLS($allowNonTLS)
     {
-        $this->allowNonTLS = $allowNonTLS;
+        $this->_allowNonTLS = $allowNonTLS;
     }
 
     /**
@@ -79,7 +80,7 @@ class Message
      */
     public function getContent()
     {
-        return $this->content;
+        return $this->_content;
     }
 
     /**
@@ -87,7 +88,7 @@ class Message
      */
     public function setContent(Content $content)
     {
-        $this->content = $content;
+        $this->_content = $content;
     }
 
     /**
@@ -95,7 +96,7 @@ class Message
      */
     public function getAttachments()
     {
-        return $this->attachments;
+        return $this->_attachments;
     }
 
     /**
@@ -103,7 +104,7 @@ class Message
      */
     public function setAttachments(array $attachments)
     {
-        $this->attachments = $attachments;
+        $this->_attachments = $attachments;
     }    
 
 

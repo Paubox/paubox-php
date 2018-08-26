@@ -1,18 +1,18 @@
 <?php
-namespace Model;
+namespace data;
 
 class Header
 {
-    private $subject;
-    private $from;
-    private $replyTo;   
+    private $_subject;
+    private $_from;
+    private $_replyTo;   
 
     /**
      * @return mixed
      */
     public function getSubject()
     {
-        return $this->subject;
+        return $this->_subject;
     }
 
     /**
@@ -20,7 +20,7 @@ class Header
      */
     public function setSubject($subject)
     {
-        $this->subject = $subject;
+        $this->_subject = $subject;
     }
 
     /**
@@ -28,7 +28,7 @@ class Header
      */
     public function getFrom()
     {
-        return $this->from;
+        return $this->_from;
     }
 
     /**
@@ -36,7 +36,7 @@ class Header
      */
     public function setFrom($from)
     {
-        $this->from = $from;
+        $this->_from = $from;
     }
 
     /**
@@ -44,7 +44,7 @@ class Header
      */
     public function getReplyTo()
     {
-        return $this->replyTo;
+        return $this->_replyTo;
     }
 
     /**
@@ -52,7 +52,7 @@ class Header
      */
     public function setReplyTo($replyTo)
     {
-        $this->replyTo = $replyTo;
+        $this->_replyTo = $replyTo;
     }
 
 }

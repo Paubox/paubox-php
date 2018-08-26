@@ -1,17 +1,17 @@
 <?php
-namespace Model;
+namespace data;
 
 
 class Content
 {
-    private $plainText;
-    private $htmlText;
+    private $_plainText;
+    private $_htmlText;
     /**
      * @return mixed
      */
     public function getPlainText()
     {
-        return $this->plainText;
+        return $this->_plainText;
     }
 
     /**
@@ -19,7 +19,7 @@ class Content
      */
     public function setPlainText($plainText)
     {
-        $this->plainText = $plainText;
+        $this->_plainText = $plainText;
     }
 
     /**
@@ -27,7 +27,7 @@ class Content
      */
     public function getHtmlText()
     {
-        return $this->htmlText;
+        return $this->_htmlText;
     }
 
     /**
@@ -35,7 +35,7 @@ class Content
      */
     public function setHtmlText($htmlText)
     {
-        $this->htmlText = $htmlText;
+        $this->_htmlText = $htmlText;
     }
 
 }

@@ -1,17 +1,17 @@
 <?php
-namespace Model;
+namespace data;
 
 class SendMessageResponse
 {
-    private $sourceTrackingId;
-    private $data;
-    private $errors;
+    private $_sourceTrackingId;
+    private $_data;
+    private $_errors;
     /**
      * @return mixed
      */
     public function getSourceTrackingId()
     {
-        return $this->sourceTrackingId;
+        return $this->_sourceTrackingId;
     }
 
     /**
@@ -19,7 +19,7 @@ class SendMessageResponse
      */
     public function setSourceTrackingId($sourceTrackingId)
     {
-        $this->sourceTrackingId = $sourceTrackingId;
+        $this->_sourceTrackingId = $sourceTrackingId;
     }
 
     /**
@@ -27,7 +27,7 @@ class SendMessageResponse
      */
     public function getData()
     {
-        return $this->data;
+        return $this->_data;
     }
 
     /**
@@ -35,7 +35,7 @@ class SendMessageResponse
      */
     public function setData($data)
     {
-        $this->data = $data;
+        $this->_data = $data;
     }
 
     /**
@@ -43,7 +43,7 @@ class SendMessageResponse
      */
     public function getErrors()
     {
-        return $this->errors;
+        return $this->_errors;
     }
 
     /**
@@ -51,7 +51,7 @@ class SendMessageResponse
      */
     public function setErrors($errors)
     {
-        $this->errors = $errors;
+        $this->_errors = $errors;
     }
 
 }
