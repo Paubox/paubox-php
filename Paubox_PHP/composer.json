@@ -1,0 +1,22 @@
+{
+	"name" : "paubox/Paubox.Email.API",
+	"require" : {
+		"monolog/monolog" : "1.0.*",
+		"nategood/httpful" : "*"
+	},
+	"require-dev" : {
+		"clue/phar-composer" : "^1.0",
+		"phpunit/phpunit": "7"
+		
+	},
+	"autoload" : {
+		"psr-0" : {
+			"Paubox_PHP" : "src/"
+		}
+	},
+	"archive" : {
+		"exclude" : [
+			"!/src"
+		]
+	}
+}
