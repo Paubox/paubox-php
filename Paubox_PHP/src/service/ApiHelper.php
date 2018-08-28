@@ -1,5 +1,4 @@
 <?php
-include(dirname(__DIR__).'/httpful.phar');
 
 class ApiHelper
 {
@@ -19,23 +18,22 @@ class ApiHelper
             ->addHeaders($header)
             ->body($requestBody)
             ->send();
-        
+
         return $response->raw_body;
     }
-    
-    function callToAPIByGet($uri,$authHeader) {
-        
+
+    function callToAPIByGet($uri, $authHeader)
+    {
         $header['accept'] = "application/json";
-        if(null!=$authHeader){
+        if (null != $authHeader) {
             $header['Authorization'] = $authHeader;
         }
-        
-        $response = \Httpful\Request::get($uri)
-        ->sendsJson()
-        ->addHeaders($header)
-        ->send();
-        
-        return  $response->raw_body;
+
+        $response = \Httpful\Request::get($uri)->sendsJson()
+            ->addHeaders($header)
+            ->send();
+
+        return $response->raw_body;
     }
 }
 
