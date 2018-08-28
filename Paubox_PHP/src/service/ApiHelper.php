@@ -1,5 +1,5 @@
 <?php
-include('./httpful.phar');
+include(dirname(__DIR__).'/httpful.phar');
 
 class ApiHelper
 {

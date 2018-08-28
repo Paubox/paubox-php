@@ -5,9 +5,9 @@ use data\Message;
 use data\GetEmailDispositionResponse;
 use data\SendMessageResponse;
 
-include_once 'service/ApiHelper.php';
-include_once 'data/GetEmailDispositionResponse.php';
-include_once 'data/SendMessageResponse.php';
+include_once dirname(__DIR__).'/service/ApiHelper.php';
+include_once dirname(__DIR__).'/data/GetEmailDispositionResponse.php';
+include_once dirname(__DIR__).'/data/SendMessageResponse.php';
 
 class EmailService
 {

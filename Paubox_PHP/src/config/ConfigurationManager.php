@@ -1,5 +1,5 @@
 <?php
-include_once 'common/Constants.php';
+include_once dirname(__DIR__).'/common/Constants.php';
 class ConfigurationManager {
     
     private static function readProperties($fileAndPath){
