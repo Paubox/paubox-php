@@ -10,10 +10,7 @@ class ApiHelper
 
         if (null != $authHeader) {
             $header['Authorization'] = $authHeader;
-        }
-
-        // set the request data
-        $body['data'] = $requestBody;
+        }     
 
         $response = \Httpful\Request::post($uri)->sendsJson()
             ->addHeaders($header)

@@ -1,11 +1,6 @@
 <?php
 namespace data;
 
-/**
- *
- * @author ADMIN
- *        
- */
 class MessageDetails
 {
 

@@ -1,7 +1,6 @@
 <?php
 namespace data;
 
-
 class Content
 {
     private $_plainText;

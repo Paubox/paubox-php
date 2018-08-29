@@ -4,6 +4,8 @@ use data\Attachment;
 use data\Header;
 use data\Message;
 use data\Content;
+use data\GetEmailDispositionResponse;
+use data\SendMessageResponse;
 
 $pauboxPharFileLocation='phar://E:/WORK/GIT/paubox-php/PauboxTest/Paubox.Email.API.phar/';
 include $pauboxPharFileLocation.'src/config/ConfigurationManager.php';
@@ -42,14 +44,14 @@ array_push($attachments,$attachment);
 array_push($attachments,$attachment2);
 
 $email= array();
-array_push($email,'vighneshtrivedi2004@gmail.com');
+array_push($email,'someone@domain.com');
 
 $message->setHeader($header);
 $message->setContent($content);
 $message->setAttachments($attachments);
 $message->setRecipients($email);
 
-//$sendMessageResponse = new SendMessageResponse();
+$sendMessageResponse = new SendMessageResponse();
 $sendMessageResponse = $service->SendMessage($message);
 print_r($sendMessageResponse); 
 
