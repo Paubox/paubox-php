@@ -7,13 +7,14 @@ use data\Content;
 use data\GetEmailDispositionResponse;
 use data\SendMessageResponse;
 
-$pauboxPharFileLocation='phar://E:/WORK/GIT/paubox-php/PauboxTest/Paubox.Email.API.phar/';
-include $pauboxPharFileLocation.'src/config/ConfigurationManager.php';
-include $pauboxPharFileLocation.'src/service/EmailService.php';
-include $pauboxPharFileLocation.'src/data/Message.php';
-include $pauboxPharFileLocation.'src/data/Content.php';
-include $pauboxPharFileLocation.'src/data/Header.php';
-include $pauboxPharFileLocation.'src/data/Attachment.php';
+
+$pauboxPharFilePath='phar://E:/WORK/GIT/paubox-php/PauboxTest/Paubox.Email.API.phar/';
+include $pauboxPharFilePath.'src/config/ConfigurationManager.php';
+include $pauboxPharFilePath.'src/service/EmailService.php';
+include $pauboxPharFilePath.'src/data/Message.php';
+include $pauboxPharFilePath.'src/data/Content.php';
+include $pauboxPharFilePath.'src/data/Header.php';
+include $pauboxPharFilePath.'src/data/Attachment.php';
 
 ConfigurationManager::getProperties("E:\WORK\GIT\paubox-php\PauboxTest\src\config.ini");
 
