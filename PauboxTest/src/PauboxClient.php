@@ -5,14 +5,15 @@ use data\Header;
 use data\Message;
 use data\Content;
 
-include ('phar://Paubox.Email.API.phar/src/config/ConfigurationManager.php');
-include ('phar://Paubox.Email.API.phar/src/service/EmailService.php');
-include ('phar://Paubox.Email.API.phar/src/data/Message.php');
-include ('phar://Paubox.Email.API.phar/src/data/Content.php');
-include ('phar://Paubox.Email.API.phar/src/data/Header.php');
-include ('phar://Paubox.Email.API.phar/src/data/Attachment.php');
+$pauboxPharFileLocation='phar://E:/WORK/GIT/paubox-php/PauboxTest/Paubox.Email.API.phar/';
+include $pauboxPharFileLocation.'src/config/ConfigurationManager.php';
+include $pauboxPharFileLocation.'src/service/EmailService.php';
+include $pauboxPharFileLocation.'src/data/Message.php';
+include $pauboxPharFileLocation.'src/data/Content.php';
+include $pauboxPharFileLocation.'src/data/Header.php';
+include $pauboxPharFileLocation.'src/data/Attachment.php';
 
-ConfigurationManager::getProperties("E:\projects\paubox-php\PauboxTest\src\config.ini");
+ConfigurationManager::getProperties("E:\WORK\GIT\paubox-php\PauboxTest\src\config.ini");
 
 $service=new EmailService();
 
