@@ -1,5 +1,6 @@
 <?php
 
+require dirname(dirname( dirname(__FILE__) )) . '/vendor/nategood/httpful/bootstrap.php';
 class ApiHelper
 {
 
