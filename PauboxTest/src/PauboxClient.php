@@ -52,5 +52,5 @@ $message->setRecipients($email);
 $sendMessageResponse = $service->SendMessage($message);
 print_r($sendMessageResponse); 
 
-//$resp= $service->getEmailDisposition("97b18032-59d5-47c7-a7c6-a2ed27f0f44e");
-//print_r($resp);
+$resp= $service->getEmailDisposition($sendMessageResponse->sourceTrackingId);
+print_r($resp);
