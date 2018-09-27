@@ -50,29 +50,127 @@ emailService.
 ### Sending messages
 
 ```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$paubox = new Paubox();
+
+$message = new Paubox\Mail\Message();
+$content = new Paubox\Mail\Content();
+$content->setPlainText("Hello World");
+
+$header = new Paubox\Mail\Header();
+$header->setSubject("Testing!");
+$header->setFrom("sender@domain.com");
+
+$recipients = array();
+array_push($recipients,'recipient@example.com');
+
+$message->setHeader($header);
+$message->setContent($content);
+$message->setRecipients($recipients);
+
+$sendMessageResponse = new Paubox\Mail\SendMessageResponse();
+$sendMessageResponse = $paubox->sendMessage($message);
+print_r($sendMessageResponse);
 ```
 
 ### Allowing non-TLS message delivery
 
 If you want to send non-PHI mail that does not need to be HIPAA-compliant, you can allow the message delivery to take place even if a TLS connection is unavailable.
 
-This means the message will not be converted into a secure portal message when a nonTLS connection is encountered.
+This means the message will not be converted into a secure portal message when a nonTLS connection is encountered. To allow a non-TLS message delivery, call `setAllowNonTLS(true)` on the message object.
 
 ```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$paubox = new Paubox();
+
+$message = new Paubox\Mail\Message();
+$content = new Paubox\Mail\Content();
+$content->setPlainText("Hello World");
+
+$header = new Paubox\Mail\Header();
+$header->setSubject("Testing!");
+$header->setFrom("sender@domain.com");
+
+$recipients = array();
+array_push($recipients,'recipient@example.com');
+
+$message->setHeader($header);
+$message->setContent($content);
+$message->setRecipients($recipients);
+$message->setAllowNonTLS(true);
+
+$sendMessageResponse = new Paubox\Mail\SendMessageResponse();
+$sendMessageResponse = $paubox->sendMessage($message);
+print_r($sendMessageResponse);
 ```
 
 ### Adding Attachments and Additional Headers
 
 
 ```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$paubox = new Paubox();
+
+$message = new Paubox\Mail\Message();
+$content = new Paubox\Mail\Content();
+$content->setPlainText("Hello World");
+$content->setHtmlText("<html><head></head><body>Hello World</body></html>");
+
+$header = new Paubox\Mail\Header();
+$header->setSubject("Testing!");
+$header->setFrom("sender@domain.com");
+$header->setReplyTo("reply_to@domain.com");
+
+$firstAttachment = new Paubox\Mail\Attachment();
+$firstAttachment->setFileName("hello_world.txt");
+$firstAttachment->setContentType("text/plain");
+$firstAttachment->setContent("SGVsbG8gV29ybGQh\n");
+
+$secondAttachment = new Paubox\Mail\Attachment();
+$secondAttachment->setFileName("hello_world2.txt");
+$secondAttachment->setContentType("text/plain");
+$secondAttachment->setContent("SGVsbG8gV29ybGQh\n");
+
+$attachments = array();
+array_push($attachments,$firstAttachment);
+array_push($attachments,$secondAttachment);
+
+$recipients = array();
+array_push($recipients,'recipient@example.com');
+
+$bcc = array();
+array_push($bcc, 'recipient2@example.com');
+
+$message->setHeader($header);
+$message->setContent($content);
+$message->setAttachments($attachments);
+$message->setRecipients($recipients);
+$message->setBcc($bcc);
+
+$sendMessageResponse = new Paubox\Mail\SendMessageResponse();
+$sendMessageResponse = $paubox->sendMessage($message);
+print_r($sendMessageResponse);
 ```
 
 
 ### Checking Email Dispositions
 
-The SOURCE_TRACKING_ID of a message is returned in the response of the sendMessage method. To check the status for any email, use its source tracking id and call the getEmailDisposition method of emailService:
+The SOURCE_TRACKING_ID of a message is returned in the response of the sendMessage method. To check the status for any email, use its source tracking id and call the getEmailDisposition method of Paubox:
 
 ```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$paubox = new Paubox();
+
+$resp = $paubox->getEmailDisposition('SOURCE_TRACKING_ID');
+print_r($resp);
 ```
 
 <a name="#contributing"></a>
