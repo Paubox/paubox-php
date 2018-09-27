@@ -3,9 +3,9 @@
 use Paubox\Mail\Message;
 use Paubox\Mail\GetEmailDispositionResponse;
 use Paubox\Mail\SendMessageResponse;
-include_once __DIR__ . '/service/ApiHelper.php';
-include_once __DIR__ . '/mail/GetEmailDispositionResponse.php';
-include_once __DIR__ . '/mail/SendMessageResponse.php';
+use Paubox\Service\ApiHelper;
+
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 class Paubox
 {
@@ -71,7 +71,7 @@ class Paubox
             );
             $uri = "messages";
 
-            $api = new \ApiHelper();
+            $api = new ApiHelper();
             $resp = $api->callToAPIByPost(Paubox::getURL($uri), Paubox::getAuthentication(), $jsonRequestData);
 
             $sendMessageResponse = new SendMessageResponse();
@@ -88,7 +88,7 @@ class Paubox
 
     function getEmailDisposition($sourceTrackingId)
     {
-        $api = new \ApiHelper();
+        $api = new ApiHelper();
         $uri = "message_receipt?sourceTrackingId=";
         $uri .= $sourceTrackingId;
         $resp = $api->callToAPIByGet(Paubox::getURL($uri), Paubox::getAuthentication());

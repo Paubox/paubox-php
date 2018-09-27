@@ -1,4 +1,5 @@
 <?php
+namespace Paubox\Service;
 
 class ApiHelper
 {

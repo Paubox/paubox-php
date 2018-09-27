@@ -7,8 +7,10 @@
         "phpunit/phpunit": "^5.7.9"
     },
     "autoload" : {
-        "psr-0" : {
-            "Paubox" : "src"
+        "psr-4" : {
+            "Paubox\\" : "src/",
+            "Paubox\\Mail\\": "src/mail/",
+            "Paubox\\Service\\": "src/service/"
         }
     },
     "archive" : {
