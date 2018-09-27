@@ -45,7 +45,7 @@ $ echo ".env" >> .gitignore
 ## Usage
 
 To send email, prepare a Message object and call the sendMessage method of
-emailService.
+Paubox.
 
 ### Sending messages
 
@@ -79,7 +79,7 @@ print_r($sendMessageResponse);
 
 If you want to send non-PHI mail that does not need to be HIPAA-compliant, you can allow the message delivery to take place even if a TLS connection is unavailable.
 
-This means the message will not be converted into a secure portal message when a nonTLS connection is encountered. To allow a non-TLS message delivery, call `setAllowNonTLS(true)` on the message object.
+This means the message will not be converted into a secure portal message when a non-TLS connection is encountered. To allow a non-TLS message delivery, call the `setAllowNonTLS(true)` method on the message object.
 
 ```php
 <?php
