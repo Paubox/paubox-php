@@ -1,11 +1,6 @@
 <?php
 
-use Paubox\Mail\Message;
-use Paubox\Mail\GetEmailDispositionResponse;
-use Paubox\Mail\SendMessageResponse;
-use Paubox\Service\ApiHelper;
-
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+namespace Paubox;
 
 class Paubox
 {
@@ -26,7 +21,7 @@ class Paubox
         return $token;
     }
 
-    public function sendMessage(Message $message)
+    public function sendMessage(Mail\Message $message)
     {
         try {
             $header = $message->getHeader();
@@ -71,10 +66,10 @@ class Paubox
             );
             $uri = "messages";
 
-            $api = new ApiHelper();
+            $api = new Service\ApiHelper();
             $resp = $api->callToAPIByPost(Paubox::getURL($uri), Paubox::getAuthentication(), $jsonRequestData);
 
-            $sendMessageResponse = new SendMessageResponse();
+            $sendMessageResponse = new Mail\SendMessageResponse();
             $sendMessageResponse = json_decode($resp);
 
             if (is_null($sendMessageResponse) && is_null($sendMessageResponse->data) && is_null($sendMessageResponse->sourceTrackingId) && is_null($sendMessageResponse->errors)) {
@@ -88,11 +83,11 @@ class Paubox
 
     function getEmailDisposition($sourceTrackingId)
     {
-        $api = new ApiHelper();
+        $api = new Service\ApiHelper();
         $uri = "message_receipt?sourceTrackingId=";
         $uri .= $sourceTrackingId;
         $resp = $api->callToAPIByGet(Paubox::getURL($uri), Paubox::getAuthentication());
-        $emailDisposition = new GetEmailDispositionResponse();
+        $emailDisposition = new Mail\GetEmailDispositionResponse();
         $emailDisposition = json_decode($resp);
         if (is_null($emailDisposition) && is_null($emailDisposition->data) && is_null($emailDisposition->sourceTrackingId) && is_null($emailDisposition->errors)) {
             throw new \Exception();

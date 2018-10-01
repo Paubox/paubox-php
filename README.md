@@ -53,7 +53,7 @@ Paubox.
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-$paubox = new Paubox();
+$paubox = new Paubox\Paubox();
 
 $message = new Paubox\Mail\Message();
 $content = new Paubox\Mail\Content();
@@ -85,7 +85,7 @@ This means the message will not be converted into a secure portal message when a
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-$paubox = new Paubox();
+$paubox = new Paubox\Paubox();
 
 $message = new Paubox\Mail\Message();
 $content = new Paubox\Mail\Content();
@@ -115,7 +115,7 @@ print_r($sendMessageResponse);
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-$paubox = new Paubox();
+$paubox = new Paubox\Paubox();
 
 $message = new Paubox\Mail\Message();
 $content = new Paubox\Mail\Content();
@@ -167,7 +167,7 @@ The SOURCE_TRACKING_ID of a message is returned in the response of the sendMessa
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-$paubox = new Paubox();
+$paubox = new Paubox\Paubox();
 
 $resp = $paubox->getEmailDisposition('SOURCE_TRACKING_ID');
 print_r($resp);
