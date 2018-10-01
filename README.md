@@ -16,14 +16,8 @@ The API wrapper allows you to construct and send messages.
 
 Using composer:
 
-Add Paubox to your composer.json file.
-
-```json
-{
-  "require": {
-    "paubox/paubox-php": "~1"
-  }
-}
+```bash
+$ composer require paubox/paubox-php
 ```
 
 ### Getting Paubox API Credentials
