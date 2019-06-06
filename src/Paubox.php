@@ -20,27 +20,9 @@ class Paubox
 
         return $token;
     }
-    
-    // Returns ForceSecureNotification valid value.
-    private function returnForceSecureNotificationValue($forceSecureNotification)
-    {
-        $forceSecureNotificationValue = null;
-        if ($forceSecureNotification == null || $forceSecureNotification == "") {
-            return null;
-        } else {
-            $forceSecureNotificationValue = strtolower(trim($forceSecureNotification));
-            if ($forceSecureNotificationValue == "true") {
-                return true;
-            } else if ($forceSecureNotificationValue == "false") {
-                return false;
-            } else {
-                return null;
-            }
-        }
-    }    
 
-    public function sendMessage(Mail\Message $message)      
-    {        
+    public function sendMessage(Mail\Message $message)
+    {
         try {
             $header = $message->getHeader();
             $content = $message->getContent();
@@ -61,56 +43,27 @@ class Paubox
                     'content' => $attachment->getContent()
                 );
                 array_push($jsonAttachmentsArray, $jsonAttachment);
-            }                       
-                                       
-            $forceSecureNotificationValue = Paubox::returnForceSecureNotificationValue($message->getForceSecureNotification());
-                        
-            if (isset($forceSecureNotificationValue)) // if $forceSecureNotificationValue is not null or empty, pass forceSecureNotification value in request
-            {
-                $jsonRequestData = array(
-                    'data' => array(
-                        'message' => array(
-                            'recipients' => $message->getRecipients(),
-                            'bcc' => $message->getBcc(),
-                            'headers' => array(
-                                'subject' => $header->getSubject(),
-                                'from' => $header->getFrom(),
-                                'reply-to' => $header->getReplyTo()
-                            ),
-                            'allowNonTLS' => $message->isAllowNonTLS(),
-                            'forceSecureNotification' => $forceSecureNotificationValue,
-                            'content' => array(
-                                'text/plain' => $content->getPlainText(),
-                                'text/html' => $content->getHtmlText()
-                            ),
-                            'attachments' => $jsonAttachmentsArray
-                        )
-                    )
-                );
-            }            
-            else
-            {
-                $jsonRequestData = array(
-                    'data' => array(
-                        'message' => array(
-                            'recipients' => $message->getRecipients(),
-                            'bcc' => $message->getBcc(),
-                            'headers' => array(
-                                'subject' => $header->getSubject(),
-                                'from' => $header->getFrom(),
-                                'reply-to' => $header->getReplyTo()
-                            ),
-                            'allowNonTLS' => $message->isAllowNonTLS(),                            
-                            'content' => array(
-                                'text/plain' => $content->getPlainText(),
-                                'text/html' => $content->getHtmlText()
-                            ),
-                            'attachments' => $jsonAttachmentsArray
-                        )
-                    )
-                );
             }
-            
+
+            $jsonRequestData = array(
+                'data' => array(
+                    'message' => array(
+                        'recipients' => $message->getRecipients(),
+                        'bcc' => $message->getBcc(),
+                        'headers' => array(
+                            'subject' => $header->getSubject(),
+                            'from' => $header->getFrom(),
+                            'reply-to' => $header->getReplyTo()
+                        ),
+                        'allowNonTLS' => $message->isAllowNonTLS(),
+                        'content' => array(
+                            'text/plain' => $content->getPlainText(),
+                            'text/html' => $content->getHtmlText()
+                        ),
+                        'attachments' => $jsonAttachmentsArray
+                    )
+                )
+            );
             $uri = "messages";
 
             $api = new Service\ApiHelper();

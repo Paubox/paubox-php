@@ -29,7 +29,7 @@ class PauboxTest extends TestCase
      */
     public function setUp()
     {
-        $this->paubox = new Paubox\Paubox();
+        $this->paubox = new Paubox();
     }
 
     /**
@@ -48,7 +48,7 @@ class PauboxTest extends TestCase
         $csvObj->next();
         $csvObj->next(); // Skip headers from csv file
         for (; $csvObj->valid(); $csvObj->next()) {
-            if ($csvObj->current()[14] != 'SUCCESS') // If Expected output is not Success , then skip the test data
+            if ($csvObj->current()[13] != 'SUCCESS') // If Expected output is not Success , then skip the test data
                 continue;
 
             $currentObj = $csvObj->current();
@@ -82,8 +82,6 @@ class PauboxTest extends TestCase
                 $content->setHtmlText(null);
             else
                 $content->setHtmlText($currentObj[8]);
-            
-            $message->setForceSecureNotification($currentObj[13]);
 
             $attachments = array();
             if (filter_var($currentObj[9], FILTER_VALIDATE_INT) > 0) {
@@ -117,7 +115,7 @@ class PauboxTest extends TestCase
         if (! is_null($actualResponse)) {
             if (isset($actualResponse->data) && ! is_null($actualResponse->data) && isset($actualResponse->sourceTrackingId) && ! is_null($actualResponse->sourceTrackingId)) {
                 $this->assertTrue(true);
-            } else {                
+            } else {
                 $this->fail();
             }
         } else {
@@ -132,7 +130,7 @@ class PauboxTest extends TestCase
         $csvObj->next();
         $csvObj->next(); // Skip headers from csv file
         for (; $csvObj->valid(); $csvObj->next()) {
-            if ($csvObj->current()[14] != 'ERROR') // If Expected output is not Error , then skip the test data
+            if ($csvObj->current()[13] != 'ERROR') // If Expected output is not Error , then skip the test data
                 continue;
 
             $currentObj = $csvObj->current();
@@ -166,8 +164,6 @@ class PauboxTest extends TestCase
                 $content->setHtmlText(null);
             else
                 $content->setHtmlText($currentObj[8]);
-            
-            $message->setForceSecureNotification($currentObj[13]);
 
             $attachments = array();
             if (filter_var($currentObj[9], FILTER_VALIDATE_INT) > 0) {
