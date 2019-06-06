@@ -40,6 +40,7 @@ class Paubox
     
     public function sendMessage(Mail\Message $message)
     {
+        $encodedHtmlText= null;
         try {
             $header = $message->getHeader();
             $content = $message->getContent();
@@ -60,6 +61,12 @@ class Paubox
                 array_push($jsonAttachmentsArray, $jsonAttachment);
             }
             
+            $htmlText = $content->getHtmlText();
+            if(isset($htmlText))  // if html text is not null or empty, convert it to base 64 string.
+            {
+                $encodedHtmlText = base64_encode($htmlText);
+            }
+            
             $forceSecureNotificationValue = Paubox::returnForceSecureNotificationValue($message->getForceSecureNotification());
             
             if (isset($forceSecureNotificationValue)) // if $forceSecureNotificationValue is not null or empty, pass forceSecureNotification value in request
@@ -78,7 +85,7 @@ class Paubox
                             'forceSecureNotification' => $forceSecureNotificationValue,
                             'content' => array(
                                 'text/plain' => $content->getPlainText(),
-                                'text/html' => $content->getHtmlText()
+                                'text/html' => $encodedHtmlText
                             ),
                             'attachments' => $jsonAttachmentsArray
                         )
@@ -100,7 +107,7 @@ class Paubox
                             'allowNonTLS' => $message->isAllowNonTLS(),
                             'content' => array(
                                 'text/plain' => $content->getPlainText(),
-                                'text/html' => $content->getHtmlText()
+                                'text/html' => $encodedHtmlText
                             ),
                             'attachments' => $jsonAttachmentsArray
                         )
