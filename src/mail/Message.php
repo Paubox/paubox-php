@@ -10,7 +10,8 @@ class Message
     private $_allowNonTLS = false;
     private $_content;
     private $_attachments  = array();
-
+    private $_forceSecureNotification;
+    
     /**
      * @return mixed
      */
@@ -107,6 +108,20 @@ class Message
         $this->_attachments = $attachments;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getForceSecureNotification()
+    {
+        return $this->_forceSecureNotification;
+    }
+    
+    /**
+     * @param mixed $forceSecureNotification
+     */
+    public function setForceSecureNotification($forceSecureNotification){
+        $this->_forceSecureNotification = $forceSecureNotification;
+    }
 
 }
 

@@ -12,30 +12,45 @@ class Paubox
         $base_url .= $uri;
         return $base_url;
     }
-
+    
     private function getAuthentication()
     {
         $token = "Token token=";
         $token .= \getenv('PAUBOX_API_KEY');
-
         return $token;
     }
-
+    
+    // Returns ForceSecureNotification valid value.
+    private function returnForceSecureNotificationValue($forceSecureNotification)
+    {
+        $forceSecureNotificationValue = null;
+        if ($forceSecureNotification == null || $forceSecureNotification == "") {
+            return null;
+        } else {
+            $forceSecureNotificationValue = strtolower(trim($forceSecureNotification));
+            if ($forceSecureNotificationValue == "true") {
+                return true;
+            } else if ($forceSecureNotificationValue == "false") {
+                return false;
+            } else {
+                return null;
+            }
+        }
+    }
+    
     public function sendMessage(Mail\Message $message)
     {
         try {
             $header = $message->getHeader();
             $content = $message->getContent();
             $attachment = $message->getAttachments();
-
+            
             if ($header == null)
                 throw new \Exception("Message Header cannot be null.");
-
+            
             if ($content == null)
                 throw new \Exception("Message Content cannot be null.");
-
             $jsonAttachmentsArray = array();
-
             foreach ($message->getAttachments() as $attachment) {
                 $jsonAttachment = array(
                     'fileName' => $attachment->getFileName(),
@@ -44,35 +59,63 @@ class Paubox
                 );
                 array_push($jsonAttachmentsArray, $jsonAttachment);
             }
-
-            $jsonRequestData = array(
-                'data' => array(
-                    'message' => array(
-                        'recipients' => $message->getRecipients(),
-                        'bcc' => $message->getBcc(),
-                        'headers' => array(
-                            'subject' => $header->getSubject(),
-                            'from' => $header->getFrom(),
-                            'reply-to' => $header->getReplyTo()
-                        ),
-                        'allowNonTLS' => $message->isAllowNonTLS(),
-                        'content' => array(
-                            'text/plain' => $content->getPlainText(),
-                            'text/html' => $content->getHtmlText()
-                        ),
-                        'attachments' => $jsonAttachmentsArray
+            
+            $forceSecureNotificationValue = Paubox::returnForceSecureNotificationValue($message->getForceSecureNotification());
+            
+            if (isset($forceSecureNotificationValue)) // if $forceSecureNotificationValue is not null or empty, pass forceSecureNotification value in request
+            {
+                $jsonRequestData = array(
+                    'data' => array(
+                        'message' => array(
+                            'recipients' => $message->getRecipients(),
+                            'bcc' => $message->getBcc(),
+                            'headers' => array(
+                                'subject' => $header->getSubject(),
+                                'from' => $header->getFrom(),
+                                'reply-to' => $header->getReplyTo()
+                            ),
+                            'allowNonTLS' => $message->isAllowNonTLS(),
+                            'forceSecureNotification' => $forceSecureNotificationValue,
+                            'content' => array(
+                                'text/plain' => $content->getPlainText(),
+                                'text/html' => $content->getHtmlText()
+                            ),
+                            'attachments' => $jsonAttachmentsArray
+                        )
                     )
-                )
-            );
+                );
+            }
+            else
+            {
+                $jsonRequestData = array(
+                    'data' => array(
+                        'message' => array(
+                            'recipients' => $message->getRecipients(),
+                            'bcc' => $message->getBcc(),
+                            'headers' => array(
+                                'subject' => $header->getSubject(),
+                                'from' => $header->getFrom(),
+                                'reply-to' => $header->getReplyTo()
+                            ),
+                            'allowNonTLS' => $message->isAllowNonTLS(),
+                            'content' => array(
+                                'text/plain' => $content->getPlainText(),
+                                'text/html' => $content->getHtmlText()
+                            ),
+                            'attachments' => $jsonAttachmentsArray
+                        )
+                    )
+                );
+            }
+            
             $uri = "messages";
-
+            
             $api = new Service\ApiHelper();
             $resp = $api->callToAPIByPost(Paubox::getURL($uri), Paubox::getAuthentication(), $jsonRequestData);
-
             $sendMessageResponse = new Mail\SendMessageResponse();
             $sendMessageResponse = json_decode($resp);
-
-            if (is_null($sendMessageResponse) && is_null($sendMessageResponse->data) && is_null($sendMessageResponse->sourceTrackingId) && is_null($sendMessageResponse->errors)) {
+            if (is_null($sendMessageResponse) && is_null($sendMessageResponse->data) && is_null($sendMessageResponse->sourceTrackingId) && is_null($sendMessageResponse->errors)) 
+            {
                 throw new \Exception($resp);
             }
         } catch (\Exception $e) {
@@ -80,7 +123,6 @@ class Paubox
         }
         return $sendMessageResponse;
     }
-
     function getEmailDisposition($sourceTrackingId)
     {
         $api = new Service\ApiHelper();
@@ -92,9 +134,7 @@ class Paubox
         if (is_null($emailDisposition) && is_null($emailDisposition->data) && is_null($emailDisposition->sourceTrackingId) && is_null($emailDisposition->errors)) {
             throw new \Exception();
         }
-
         return $emailDisposition;
     }
 }
-
 ?>
