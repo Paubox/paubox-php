@@ -5,6 +5,7 @@ namespace Paubox\Mail;
 class Message
 {
     private $_recipients = array();
+    private $_cc = array();
     private $_bcc = array();
     private $_header;
     private $_allowNonTLS = false;
@@ -121,6 +122,22 @@ class Message
      */
     public function setForceSecureNotification($forceSecureNotification){
         $this->_forceSecureNotification = $forceSecureNotification;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getCc()
+    {
+        return $this->_cc;
+    }
+    
+    /**
+     * @param mixed $cc
+     */
+    public function setCc(array $cc)
+    {
+        $this->_cc = $cc;
     }
 
 }

@@ -75,6 +75,7 @@ class Paubox
                     'data' => array(
                         'message' => array(
                             'recipients' => $message->getRecipients(),
+                            'cc' => $message->getCc(),
                             'bcc' => $message->getBcc(),
                             'headers' => array(
                                 'subject' => $header->getSubject(),
@@ -98,6 +99,7 @@ class Paubox
                     'data' => array(
                         'message' => array(
                             'recipients' => $message->getRecipients(),
+                            'cc' => $message->getCc(),
                             'bcc' => $message->getBcc(),
                             'headers' => array(
                                 'subject' => $header->getSubject(),

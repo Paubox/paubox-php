@@ -176,6 +176,9 @@ array_push($recipients,'recipient@example.com');
 $bcc = array();
 array_push($bcc, 'recipient2@example.com');
 
+$cc = array();
+array_push($cc, 'recipientcc@example.com');
+
 $message->setHeader($header);
 $message->setContent($content);
 $message->setAttachments($attachments);
