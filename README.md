@@ -104,6 +104,39 @@ $sendMessageResponse = $paubox->sendMessage($message);
 print_r($sendMessageResponse);
 ```
 
+### Forcing Secure Notifications
+Paubox Secure Notifications allow an extra layer of security, especially when coupled with an organization's requirement for message recipients to use 2-factor authentication to read messages (this setting is available to org administrators in the Paubox Admin Panel).
+
+Instead of receiving an email with the message contents, the recipient will receive a notification email that they have a new message in Paubox.
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$paubox = new Paubox\Paubox();
+
+$message = new Paubox\Mail\Message();
+$content = new Paubox\Mail\Content();
+$content->setPlainText("Hello World");
+
+$header = new Paubox\Mail\Header();
+$header->setSubject("Testing!");
+$header->setFrom("sender@domain.com");
+
+$recipients = array();
+array_push($recipients,'recipient@example.com');
+
+$message->setHeader($header);
+$message->setContent($content);
+$message->setRecipients($recipients);
+$message->setForceSecureNotification("true");
+
+$sendMessageResponse = new Paubox\Mail\SendMessageResponse();
+$sendMessageResponse = $paubox->sendMessage($message);
+print_r($sendMessageResponse);
+```
+
+
 ### Adding Attachments and Additional Headers
 
 
@@ -142,6 +175,9 @@ array_push($recipients,'recipient@example.com');
 
 $bcc = array();
 array_push($bcc, 'recipient2@example.com');
+
+$cc = array();
+array_push($cc, 'recipientcc@example.com');
 
 $message->setHeader($header);
 $message->setContent($content);

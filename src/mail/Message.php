@@ -5,12 +5,14 @@ namespace Paubox\Mail;
 class Message
 {
     private $_recipients = array();
+    private $_cc = array();
     private $_bcc = array();
     private $_header;
     private $_allowNonTLS = false;
     private $_content;
     private $_attachments  = array();
-
+    private $_forceSecureNotification;
+    
     /**
      * @return mixed
      */
@@ -107,6 +109,36 @@ class Message
         $this->_attachments = $attachments;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getForceSecureNotification()
+    {
+        return $this->_forceSecureNotification;
+    }
+    
+    /**
+     * @param mixed $forceSecureNotification
+     */
+    public function setForceSecureNotification($forceSecureNotification){
+        $this->_forceSecureNotification = $forceSecureNotification;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getCc()
+    {
+        return $this->_cc;
+    }
+    
+    /**
+     * @param mixed $cc
+     */
+    public function setCc(array $cc)
+    {
+        $this->_cc = $cc;
+    }
 
 }
 
