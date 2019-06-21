@@ -48,7 +48,7 @@ class PauboxTest extends TestCase
         $csvObj->next();
         $csvObj->next(); // Skip headers from csv file
         for (; $csvObj->valid(); $csvObj->next()) {
-            if ($csvObj->current()[14] != 'SUCCESS') // If Expected output is not Success , then skip the test data
+            if ($csvObj->current()[15] != 'SUCCESS') // If Expected output is not Success , then skip the test data
                 continue;
 
             $currentObj = $csvObj->current();
@@ -64,6 +64,9 @@ class PauboxTest extends TestCase
             ]);
             $message->setBcc([
                 $currentObj[2]
+            ]);
+            $message->setCc([
+                $currentObj[14]
             ]);
 
             $header->setSubject($currentObj[3]);
@@ -132,7 +135,7 @@ class PauboxTest extends TestCase
         $csvObj->next();
         $csvObj->next(); // Skip headers from csv file
         for (; $csvObj->valid(); $csvObj->next()) {
-            if ($csvObj->current()[14] != 'ERROR') // If Expected output is not Error , then skip the test data
+            if ($csvObj->current()[15] != 'ERROR') // If Expected output is not Error , then skip the test data
                 continue;
 
             $currentObj = $csvObj->current();
@@ -148,6 +151,9 @@ class PauboxTest extends TestCase
             ]);
             $message->setBcc([
                 $currentObj[2]
+            ]);
+            $message->setCc([
+                $currentObj[14]
             ]);
 
             $header->setSubject($currentObj[3]);
