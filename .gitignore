@@ -4,3 +4,5 @@ vendor
 .project
 
 *.phar
+
+SendMessage_TestData_*.csv
