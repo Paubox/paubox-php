@@ -37,6 +37,14 @@ $ source .env
 $ echo ".env" >> .gitignore
 ```
 
+### Installing phpdotenv as a dependency
+
+Please install vlucas/phpdotenv package using composer to load API credentials from .env file:
+
+```bash
+$ composer require vlucas/phpdotenv
+```
+
 <a name="#usage"></a>
 ## Usage
 
@@ -48,6 +56,9 @@ Paubox.
 ```php
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::create(__DIR__);
+$dotenv->load();
 
 $paubox = new Paubox\Paubox();
 
@@ -81,6 +92,9 @@ This means the message will not be converted into a secure portal message when a
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
+$dotenv = Dotenv\Dotenv::create(__DIR__);
+$dotenv->load();
+
 $paubox = new Paubox\Paubox();
 
 $message = new Paubox\Mail\Message();
@@ -113,6 +127,9 @@ Instead of receiving an email with the message contents, the recipient will rece
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
+$dotenv = Dotenv\Dotenv::create(__DIR__);
+$dotenv->load();
+
 $paubox = new Paubox\Paubox();
 
 $message = new Paubox\Mail\Message();
@@ -143,6 +160,9 @@ print_r($sendMessageResponse);
 ```php
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::create(__DIR__);
+$dotenv->load();
 
 $paubox = new Paubox\Paubox();
 
@@ -198,6 +218,9 @@ The SOURCE_TRACKING_ID of a message is returned in the response of the sendMessa
 ```php
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::create(__DIR__);
+$dotenv->load();
 
 $paubox = new Paubox\Paubox();
 
