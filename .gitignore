@@ -6,3 +6,4 @@ vendor
 *.phar
 
 SendMessage_TestData_*.csv
+composer.lock
