@@ -1,24 +1,25 @@
 {
-    "name" : "paubox/paubox-php",
-    "description": "A PHP package for the Paubox Transactional Email API",
-    "homepage": "https://github.com/Paubox/paubox-php",
-    "license": "Apache-2.0",
-    "require" : {
-        "nategood/httpful" : "*"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^5.7.9"
-    },
-    "autoload" : {
-        "psr-4" : {
-            "Paubox\\" : "src/",
-            "Paubox\\Mail\\": "src/mail/",
-            "Paubox\\Service\\": "src/service/"
-        }
-    },
-    "archive" : {
-        "exclude" : [
-            "/src/tests"
-        ]
-    }
+	"name" : "paubox/paubox-php",
+	"description" : "A PHP package for the Paubox Transactional Email API",
+	"homepage" : "https://github.com/Paubox/paubox-php",
+	"license" : "Apache-2.0",
+	"require" : {
+		"nategood/httpful" : "*",
+		"vlucas/phpdotenv" : "3.4.0"
+	},
+	"require-dev" : {
+		"phpunit/phpunit" : "^5.7.9"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"Paubox\\" : "src/",
+			"Paubox\\Mail\\" : "src/mail/",
+			"Paubox\\Service\\" : "src/service/"
+		}
+	},
+	"archive" : {
+		"exclude" : [
+			"/src/tests"
+		]
+	}
 }
