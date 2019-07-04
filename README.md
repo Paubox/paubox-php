@@ -37,14 +37,6 @@ $ source .env
 $ echo ".env" >> .gitignore
 ```
 
-### Installing phpdotenv as a dependency
-
-Please install vlucas/phpdotenv package using composer to load API credentials from .env file:
-
-```bash
-$ composer require vlucas/phpdotenv
-```
-
 <a name="#usage"></a>
 ## Usage
 
