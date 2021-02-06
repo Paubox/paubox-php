@@ -1,4 +1,4 @@
-<img src="https://github.com/Paubox/paubox-java/raw/master/paubox_logo.png" alt="Paubox" width="150px">
+<img src="https://avatars.githubusercontent.com/u/22528478?s=200&v=4" alt="Paubox" width="150px">
 
 # Paubox PHP
 
@@ -242,4 +242,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 ## Copyright
-Copyright &copy; 2020, Paubox Inc.
+Copyright &copy; 2021, Paubox, Inc.
