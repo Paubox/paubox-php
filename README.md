@@ -22,6 +22,8 @@ Using composer:
 $ composer require paubox/paubox-php
 ```
 
+  Note: The examples below make use of [vlucas/phpdotenv](https://github.com/vlucas/phpdotenv).  Consult the project's instructions on how to install if you want to use `.env` files.  
+
 ### Getting Paubox API Credentials
 
 You will need to have a Paubox account. You can [sign up here](https://www.paubox.com/join/see-pricing?unit=messages).
