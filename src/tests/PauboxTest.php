@@ -1,4 +1,6 @@
 <?php
+
+use Paubox\DynamicTemplate;
 use PHPUnit\Framework\TestCase;
 use Paubox\Mail\GetEmailDispositionResponse;
 use Paubox\Mail\SendMessageResponse;
@@ -23,21 +25,23 @@ class PauboxTest extends TestCase
 {
 
     private $paubox;
-
+    private $pauboxApi;
     /**
      * Prepares the environment before running a test.
      */
-    public function setUp()
+    protected function setUp(): void    
     {
         $this->paubox = new Paubox\Paubox();
+        $this->pauboxApi = new DynamicTemplate();
     }
 
     /**
      * Cleans up the environment after running a test.
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->paubox = null;
+        $this->pauboxApi = null;
         parent::tearDown();
     }
 
@@ -284,4 +288,79 @@ class PauboxTest extends TestCase
             }
         }
     }
+
+    public function testCreateDynamicTemplate()
+    {
+        $templateName = 'template_name';
+        $templateFilePath = 'temp.txt';
+
+        $response = $this->pauboxApi->createDynamicTemplate($templateName, $templateFilePath);
+
+        $this->assertNotEmpty($response);
+
+        $responseArray = json_decode($response, true);
+        $this->assertArrayHasKey('message', $responseArray);
+        $this->assertEquals('Template template_name created!', $responseArray['message']);
+
+        $params = $responseArray['params'];
+        $this->assertArrayHasKey('name', $params);
+        $this->assertEquals($templateName, $params['name']);
+    }
+
+    public function testUpdateDynamicTemplate()
+    {
+        $templateName = 'template_name_New';
+        $templateFilePath = 'temp.txt';
+
+        $response = $this->pauboxApi->updateDynamicTemplate("724", $templateName, $templateFilePath);
+
+        $this->assertNotEmpty($response);
+
+        $responseArray = json_decode($response, true);
+        $this->assertArrayHasKey('message', $responseArray);
+        $this->assertEquals("Template $templateName updated!", $responseArray['message']);
+
+        $params = $responseArray['params'];
+        $this->assertArrayHasKey('name', $params);
+        $this->assertEquals($templateName, $params['name']);
+    }
+
+    public function testDeleteDynamicTemplate()
+    {
+
+        $response = $this->pauboxApi->deleteDynamicTemplate("743");
+
+        $this->assertNotEmpty($response);
+        $responseArray = json_decode($response, true);
+        $this->assertArrayHasKey('message', $responseArray);
+    }
+
+    public function testGetAllDynamicTemplates()
+    {
+
+        $response = $this->pauboxApi->getAllDynamicTemplates();
+
+        $responseArray = json_decode($response, true);
+
+        $this->assertTrue(is_array($responseArray));
+        $this->assertGreaterThan(0, count($responseArray));
+        $this->assertArrayHasKey('id', $responseArray[0]);
+        $this->assertArrayHasKey('name', $responseArray[0]);
+        $this->assertArrayHasKey('api_customer_id', $responseArray[0]);
+    }
+
+    public function testGetDynamicTemplate()
+    {
+        $templateId = '669';
+        $response = $this->pauboxApi->getDynamicTemplate($templateId);
+        $responseArray = json_decode($response, true);
+
+        $this->assertArrayHasKey('id', $responseArray);
+        $this->assertArrayHasKey('name', $responseArray);
+        $this->assertArrayHasKey('api_customer_id', $responseArray);
+        $this->assertArrayHasKey('body', $responseArray);
+        $this->assertArrayHasKey('created_at', $responseArray);
+        $this->assertArrayHasKey('updated_at', $responseArray);
+    }
+
 }
