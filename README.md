@@ -222,6 +222,52 @@ $resp = $paubox->getEmailDisposition('SOURCE_TRACKING_ID');
 print_r($resp);
 ```
 
+
+### Dynamic Template
+
+#### Usage
+
+Create a new instance of the DynamicTemplate class and use its methods to interact with the Paubox API.
+
+```php
+createDynamicTemplate($templateName, $templateFilePath)
+Creates a new dynamic template in Paubox.
+```
+
+updateDynamicTemplate($templateId, $templateName, $templateFilePath)
+Updates an existing dynamic template in Paubox.
+
+```php
+$dynamicTemplate = new Paubox\DynamicTemplate();
+$response = $dynamicTemplate->updateDynamicTemplate('Template ID', 'Template Name', '/path/to/template.html');
+```
+
+deleteDynamicTemplate($templateId)
+Deletes an existing dynamic template in Paubox.
+
+```php
+$dynamicTemplate = new Paubox\DynamicTemplate();
+$response = $dynamicTemplate->deleteDynamicTemplate('Template ID');
+```
+
+getAllDynamicTemplates()
+Retrieves all dynamic templates in Paubox.
+
+```php
+$dynamicTemplate = new Paubox\DynamicTemplate();
+$response = $dynamicTemplate->getAllDynamicTemplates();
+```
+
+getDynamicTemplate($templateId)
+Retrieves a specific dynamic template in Paubox.
+
+```php
+$dynamicTemplate = new Paubox\DynamicTemplate();
+$response = $dynamicTemplate->getDynamicTemplate('Template ID');
+```
+
+
+
 <a name="#contributing"></a>
 ## Contributing
 
