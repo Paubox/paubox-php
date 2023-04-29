@@ -363,4 +363,116 @@ class PauboxTest extends TestCase
         $this->assertArrayHasKey('updated_at', $responseArray);
     }
 
+    public function testCreateWebhookEndpoint()
+    {
+        $targetUrl = 'https://example.com/webhook';
+        $events = ['message_received', 'message_bounced'];
+        $active = true;
+        $signingKey = 'signing_key';
+        $apiKey = 'api_key';
+
+        $response = $this->webhookEndpoint->createWebhookEndpoint($targetUrl, $events, $active, $signingKey, $apiKey);
+
+        $this->assertNotEmpty($response);
+
+        $responseArray = json_decode($response, true);
+        $this->assertEquals("Webhook created!", $responseArray['message']);
+        $this->assertArrayHasKey('target_url', $responseArray);
+        $this->assertEquals($targetUrl, $responseArray['target_url']);
+        $this->assertArrayHasKey('events', $responseArray);
+        $this->assertEquals($events, $responseArray['events']);
+        $this->assertArrayHasKey('active', $responseArray);
+        $this->assertEquals($active, $responseArray['active']);
+        $this->assertArrayHasKey('signing_key', $responseArray);
+        $this->assertEquals($signingKey, $responseArray['signing_key']);
+        $this->assertArrayHasKey('api_key', $responseArray);
+        $this->assertEquals($apiKey, $responseArray['api_key']);
+
+
+        $deleteresponse = $this->webhookEndpoint->deleteDynamicTemplate($responseArray['id']);
+        $deleteresponseArray = json_decode($deleteresponse, true);
+        $this->assertNotEmpty($deleteresponseArray);
+        $deleteresponseArray = json_decode($deleteresponseArray, true);
+        $this->assertArrayHasKey('message', $deleteresponseArray);
+        $this->assertEquals("Webhook deleted!", $deleteresponseArray['message']);
+
+    }
+
+    public function testUpdateWebhookEndpoint()
+    {
+        
+        $targetUrl = 'https://example.com/';
+        $events = ['message_received'];
+        $active = false;
+        $signingKey = 'new_signing_key';
+        $apiKey = 'new_api_key';
+
+        $Createresponse = $this->webhookEndpoint->createWebhookEndpoint($targetUrl, $events, $active, $signingKey, $apiKey);
+        $CreateresponseArray = json_decode($Createresponse, true); 
+
+        $this->assertEquals("Webhook created!", $CreateresponseArray['message']);
+
+        $endpointId = $CreateresponseArray['id'];
+
+        $targetUrl = 'https://example.com/new-webhook';
+
+        $response = $this->webhookEndpoint->updateWebhookEndpoint($endpointId, $targetUrl, $events, $active, $signingKey, $apiKey);
+
+        $this->assertNotEmpty($response);
+
+        $responseArray = json_decode($response, true);
+
+        $this->assertEquals("Webhook updated!", $responseArray['message']);
+        $this->assertArrayHasKey('target_url', $responseArray);
+        $this->assertEquals($targetUrl, $responseArray['target_url']);
+        $this->assertArrayHasKey('events', $responseArray);
+        $this->assertEquals($events, $responseArray['events']);
+        $this->assertArrayHasKey('active', $responseArray);
+        $this->assertEquals($active, $responseArray['active']);
+        $this->assertArrayHasKey('signing_key', $responseArray);
+        $this->assertEquals($signingKey, $responseArray['signing_key']);
+        $this->assertArrayHasKey('api_key', $responseArray);
+        $this->assertEquals($apiKey, $responseArray['api_key']);
+    
+        $deleteresponse = $this->webhookEndpoint->deleteDynamicTemplate($responseArray['id']);
+        $deleteresponseArray = json_decode($deleteresponse, true);
+        $this->assertNotEmpty($deleteresponseArray);
+        $deleteresponseArray = json_decode($deleteresponseArray, true);
+        $this->assertArrayHasKey('message', $deleteresponseArray);
+        $this->assertEquals("Webhook deleted!", $deleteresponseArray['message']);
+    
+    }
+    
+
+    public function testGetAllDynamicTemplates()
+    {
+        $response = $this->webhookEndpoint->getAllDynamicTemplates();
+
+        $responseArray = json_decode($response, true);
+
+        $this->assertTrue(is_array($responseArray));
+        $this->assertGreaterThan(0, count($responseArray));
+        $this->assertArrayHasKey('id', $responseArray[0]);
+        $this->assertArrayHasKey('target_url', $responseArray[0]);
+        $this->assertArrayHasKey('events', $responseArray[0]);
+        $this->assertArrayHasKey('active', $responseArray[0]);
+        $this->assertArrayHasKey('signing_key', $responseArray[0]);
+        $this->assertArrayHasKey('api_key', $responseArray[0]);
+    }
+
+    public function testGetDynamicTemplate()
+    {
+        $endpointId = '123';
+
+        $response = $this->webhookEndpoint->getDynamicTemplate($endpointId);
+        $responseArray = json_decode($response, true);
+
+        $this->assertArrayHasKey('id', $responseArray);
+        $this->assertArrayHasKey('target_url', $responseArray);
+        $this->assertArrayHasKey('events', $responseArray);
+        $this->assertArrayHasKey('active', $responseArray);
+        $this->assertArrayHasKey('signing_key', $responseArray);
+        $this->assertArrayHasKey('api_key', $responseArray);
+    }
+
 }
