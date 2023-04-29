@@ -266,7 +266,40 @@ $dynamicTemplate = new Paubox\DynamicTemplate();
 $response = $dynamicTemplate->getDynamicTemplate('Template ID');
 ```
 
+### Webhook Endpoint
 
+#### Usage
+
+Create a new instance of the WebhookEndpoint class and use its methods to interact with the Paubox API.
+
+```php
+$webhookEndpoint = new Paubox\WebhookEndpoint();
+```
+
+```php
+$response = $webhookEndpoint->createWebhookEndpoint($targetUrl, $events, $active, $signingKey, $apiKey)
+Creates a new webhook endpoint in Paubox.
+```
+
+```php
+Update existing webhook endpoint in Paubox.
+$response = $webhookEndpoint->updateWebhookEndpoint($endpoint_id, $target_url, $events, $active, $signing_key, $api_key);
+```
+
+```php
+Deletes an existing webhook endpoint in Paubox.
+$response = $webhookEndpoint->deleteWebhookEndpoint($templateId);
+```
+
+```php
+Retrieves all dynamic templates in Paubox.
+$response = $webhookEndpoint->getAllWebhookEndpoints();
+```
+
+```php
+Retrieves a specific dynamic template in Paubox.
+$response = $webhookEndpoint->getWebhookEndpoint($templateId);
+``` 
 
 <a name="#contributing"></a>
 ## Contributing

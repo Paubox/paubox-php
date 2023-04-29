@@ -87,7 +87,7 @@ class WebhookEndpoint {
     return $response;
   }
 
-  public function deleteDynamicTemplate($templateId) {
+  public function deleteWebhookEndpoint($templateId) {
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
@@ -112,7 +112,7 @@ class WebhookEndpoint {
     return $response;
   }
 
-  public function getAllDynamicTemplates() {
+  public function getAllWebhookEndpoints() {
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
@@ -137,7 +137,7 @@ class WebhookEndpoint {
     return $response;
   }
 
-  public function getDynamicTemplate($templateId) {
+  public function getWebhookEndpoint($templateId) {
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
