@@ -2,6 +2,8 @@
 
 namespace Paubox;
 
+use Paubox\Mail\SendMessageResponse;
+
 class Paubox
 {
     private function getURL($uri)
@@ -121,7 +123,7 @@ class Paubox
             
             $api = new Service\ApiHelper();
             $resp = $api->callToAPIByPost(Paubox::getURL($uri), Paubox::getAuthentication(), $jsonRequestData);
-            $sendMessageResponse = new Mail\SendMessageResponse();
+            $sendMessageResponse = new SendMessageResponse();
             $sendMessageResponse = json_decode($resp);
             if (is_null($sendMessageResponse) && is_null($sendMessageResponse->data) && is_null($sendMessageResponse->sourceTrackingId) && is_null($sendMessageResponse->errors)) 
             {
