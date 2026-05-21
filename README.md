@@ -2,7 +2,7 @@
 
 # Paubox PHP
 
-This is the official **Paubox PHP** for the [Paubox Email API](https://www.paubox.com/solutions/email-api).
+This is the official **Paubox PHP** for the [Paubox Email API](https://www.paubox.com/products/paubox-email-api).
 
 The Paubox Email API allows your application to send secure, HIPAA compliant email via [Paubox](https://www.paubox.com) and track deliveries and opens.
 
@@ -13,15 +13,15 @@ The Paubox Email API allows your application to send secure, HIPAA compliant ema
 * [License](#license)
 
 ## External Resources
-* [Documentation](https://docs.paubox.com/)
-* [Quickstart Guide](https://docs.paubox.com/paubox_email_api/docs/quickstart/)
+* [Documentation](https://docs.paubox.com/welcome)
+* [Quickstart Guide](https://docs.paubox.com/email-api/quickstart)
 
 ## Installation
 
 ### Getting Paubox API Credentials
 You will need to have a Paubox account. You can [sign up here](https://www.paubox.com/pricing/paubox-email-api).
 
-Once you have an account, follow the instructions on the REST API dashboard to verify domain ownership and generate API keys. Further [quickstart instructions for this process can be found here.](https://docs.paubox.com/paubox_email_api/docs/quickstart/)
+Once you have an account, follow the instructions on the REST API dashboard to verify domain ownership and generate API keys. Further [quickstart instructions for this process can be found here.](https://docs.paubox.com/email-api/quickstart)
 
 ### Install Package
 
@@ -51,7 +51,7 @@ composer install
 
 Please refer to the [API Endpoints](#documentation-for-api-endpoints) section below for detailed usage of each endpoint.
 
-For full API documentation and additional examples, visit [docs.paubox.com](https://docs.paubox.com/).
+For full API documentation and additional examples, visit [docs.paubox.com](https://docs.paubox.com/welcome).
 
 ---
 
