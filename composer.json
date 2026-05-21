@@ -14,6 +14,7 @@
 		"psr-4" : {
 			"Paubox\\" : "src/",
 			"Paubox\\Mail\\" : "src/mail/",
+			"Paubox\\Forms\\" : "src/forms/",
 			"Paubox\\Service\\" : "src/service/"
 		}
 	},

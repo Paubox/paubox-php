@@ -33,6 +33,21 @@ class ApiHelper
 
         return $response->raw_body;
     }
+
+    function callToAPIByPostWithResponse($uri, $auth_header, $request_body)
+    {
+        $header['accept'] = "application/json";
+        if (null != $auth_header) {
+            $header['Authorization'] = $auth_header;
+        }
+
+        $response = \Httpful\Request::post($uri)->sendsJson()
+            ->addHeaders($header)
+            ->body($request_body)
+            ->send();
+
+        return $response;
+    }
 }
 
 ?>
