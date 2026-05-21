@@ -11,9 +11,15 @@ The API wrapper also allows you to construct and send messages.
 
 # Table of Contents
 * [Installation](#installation)
-*  [Usage](#usage)
-*  [Contributing](#contributing)
-*  [License](#license)
+* [Usage](#usage)
+  * [Sending messages](#sending-messages)
+  * [Allowing non-TLS message delivery](#allowing-non-tls-message-delivery)
+  * [Forcing Secure Notifications](#forcing-secure-notifications)
+  * [Adding Attachments and Additional Headers](#adding-attachments-and-additional-headers)
+  * [Checking Email Dispositions](#checking-email-dispositions)
+  * [Paubox Forms](#paubox-forms)
+* [Contributing](#contributing)
+* [License](#license)
 
 <a name="#installation"></a>
 ## Installation
@@ -222,6 +228,69 @@ $paubox = new Paubox\Paubox();
 
 $resp = $paubox->getEmailDisposition('SOURCE_TRACKING_ID');
 print_r($resp);
+```
+
+<a name="#paubox-forms"></a>
+## Paubox Forms
+
+`PauboxForms` provides access to the [Paubox Forms API](https://docs.paubox.com/forms/get-form). No API credentials are required — these endpoints are unauthenticated.
+
+### Getting a form
+
+Retrieve the full definition of a form (HTML, JSON schema, CSS, and metadata) by its UUID.
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$forms = new Paubox\PauboxForms();
+
+$form = $forms->getForm('YOUR-FORM-UUID');
+echo $form->title;       // "Patient Intake Form"
+echo $form->form_html;   // "<form>...</form>"
+print_r($form->form_json);
+```
+
+### Submitting a form
+
+Build a `FormSubmission` with `form_data` matching the form's field schema and call `submitForm`. Returns `true` on success; throws an exception on failure.
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$forms = new Paubox\PauboxForms();
+
+$submission = new Paubox\Forms\FormSubmission();
+$submission->setFormData([
+    'first_name' => 'Jane',
+    'last_name'  => 'Smith',
+    'email'      => 'jane@example.com',
+]);
+
+$result = $forms->submitForm('YOUR-FORM-UUID', $submission);
+// $result === true on success
+```
+
+### Submitting a form with file attachments
+
+Attachments must be base64-encoded. Maximum total request size is 250 MB.
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$forms = new Paubox\PauboxForms();
+
+$attachment = new Paubox\Forms\FormAttachment();
+$attachment->setName('consent.pdf');
+$attachment->setContent(base64_encode(file_get_contents('/path/to/consent.pdf')));
+
+$submission = new Paubox\Forms\FormSubmission();
+$submission->setFormData(['first_name' => 'Jane', 'last_name' => 'Smith']);
+$submission->setAttachments([$attachment]);
+
+$result = $forms->submitForm('YOUR-FORM-UUID', $submission);
 ```
 
 <a name="#contributing"></a>
