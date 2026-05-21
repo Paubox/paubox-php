@@ -3,7 +3,7 @@ namespace Paubox;
 
 class PauboxForms
 {
-    private $baseUrl = "https://next.paubox.com";
+    private $baseUrl = "https://apx.paubox.com/forms";
 
     public function getForm($formId)
     {

@@ -48,7 +48,7 @@ src/
 - **Namespaces**: `Paubox\`, `Paubox\Mail\`, `Paubox\Forms\`, `Paubox\Service\` (see `composer.json` autoload).
 - **HTTP** is done through `Service\ApiHelper`. Pass `null` for `$auth_header` on unauthenticated endpoints — the helper skips the Authorization header automatically.
 - **Email API base URL**: `https://api.paubox.net/v1/{PAUBOX_API_USER}/` (auth: `Token token={PAUBOX_API_KEY}`)
-- **Forms API base URL**: `https://next.paubox.com` (no auth)
+- **Forms API base URL**: `https://apx.paubox.com/forms` (no auth)
 - HTML content in emails is base64-encoded before sending; plain text is sent as-is.
 - `callToAPIByPostWithResponse()` returns the raw httpful response object (use `->code` and `->raw_body`); the other two helpers return only `->raw_body`.
 - PHPUnit version is `^5.7.9` — use `@expectedException` annotation, not `$this->expectException()`.

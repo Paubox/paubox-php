@@ -69,7 +69,7 @@ errors  array
 
 ## Forms API (`Paubox\PauboxForms`)
 
-Base URL: `https://next.paubox.com`  
+Base URL: `https://apx.paubox.com/forms`  
 Authentication: None
 
 ---
