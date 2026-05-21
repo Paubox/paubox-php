@@ -4,7 +4,7 @@
 
 **NEW:** [Version 2 of the Paubox Email API SDK for PHP](https://github.com/Paubox/paubox-php/tree/sdk-generation/v2.0.0-beta) is available to beta test now. It includes code for newer features like bulk message sending, dynamic templates, and more. We will be deprecating the old in the near future.
 
-This is the official PHP wrapper for the [Paubox Email API](https://www.paubox.com/solutions/email-api). 
+This is the official PHP wrapper for the [Paubox Email API](https://www.paubox.com/products/paubox-email-api). 
 
 The Paubox Email API allows your application to send secure, HIPAA compliant email via Paubox and track deliveries and opens.
 The API wrapper also allows you to construct and send messages.
@@ -26,7 +26,7 @@ $ composer require paubox/paubox-php
 
 ### Getting Paubox API Credentials
 
-You will need to have a Paubox account. You can [sign up here](https://www.paubox.com/join/see-pricing?unit=messages).
+You will need to have a Paubox account. You can [sign up here](https://www.paubox.com/pricing/paubox-email-api).
 
 Once you have an account, follow the instructions on the Rest API dashboard to verify domain ownership and generate API credentials.
 
