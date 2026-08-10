@@ -79,7 +79,6 @@ $message->setHeader($header);
 $message->setContent($content);
 $message->setRecipients($recipients);
 
-$sendMessageResponse = new Paubox\Mail\SendMessageResponse();
 $sendMessageResponse = $paubox->sendMessage($message);
 print_r($sendMessageResponse);
 ```
@@ -115,7 +114,6 @@ $message->setContent($content);
 $message->setRecipients($recipients);
 $message->setAllowNonTLS(true);
 
-$sendMessageResponse = new Paubox\Mail\SendMessageResponse();
 $sendMessageResponse = $paubox->sendMessage($message);
 print_r($sendMessageResponse);
 ```
@@ -150,7 +148,6 @@ $message->setContent($content);
 $message->setRecipients($recipients);
 $message->setForceSecureNotification("true");
 
-$sendMessageResponse = new Paubox\Mail\SendMessageResponse();
 $sendMessageResponse = $paubox->sendMessage($message);
 print_r($sendMessageResponse);
 ```
@@ -207,7 +204,6 @@ $message->setAttachments($attachments);
 $message->setRecipients($recipients);
 $message->setBcc($bcc);
 
-$sendMessageResponse = new Paubox\Mail\SendMessageResponse();
 $sendMessageResponse = $paubox->sendMessage($message);
 print_r($sendMessageResponse);
 ```

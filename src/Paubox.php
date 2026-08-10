@@ -23,7 +23,6 @@ class Paubox
     // Returns ForceSecureNotification valid value.
     private function returnForceSecureNotificationValue($forceSecureNotification)
     {
-        $forceSecureNotificationValue = null;
         if ($forceSecureNotification == null || $forceSecureNotification == "") {
             return null;
         } else {
@@ -44,8 +43,7 @@ class Paubox
         try {
             $header = $message->getHeader();
             $content = $message->getContent();
-            $attachment = $message->getAttachments();
-            
+
             if ($header == null)
                 throw new \Exception("Message Header cannot be null.");
             
@@ -121,7 +119,6 @@ class Paubox
             
             $api = new Service\ApiHelper();
             $resp = $api->callToAPIByPost(Paubox::getURL($uri), Paubox::getAuthentication(), $jsonRequestData);
-            $sendMessageResponse = new Mail\SendMessageResponse();
             $sendMessageResponse = json_decode($resp);
             if (is_null($sendMessageResponse) && is_null($sendMessageResponse->data) && is_null($sendMessageResponse->sourceTrackingId) && is_null($sendMessageResponse->errors)) 
             {
@@ -138,7 +135,6 @@ class Paubox
         $uri = "message_receipt?sourceTrackingId=";
         $uri .= $sourceTrackingId;
         $resp = $api->callToAPIByGet(Paubox::getURL($uri), Paubox::getAuthentication());
-        $emailDisposition = new Mail\GetEmailDispositionResponse();
         $emailDisposition = json_decode($resp);
         if (is_null($emailDisposition) && is_null($emailDisposition->data) && is_null($emailDisposition->sourceTrackingId) && is_null($emailDisposition->errors)) {
             throw new \Exception();
