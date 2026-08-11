@@ -49,6 +49,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider getFormDataProvider_Success
+     * @group integration
      */
     public function testGetForm_ReturnSuccess($formId)
     {
@@ -62,6 +63,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider getFormDataProvider_NotFound
+     * @group integration
      */
     public function testGetForm_ReturnNotFound($formId)
     {
@@ -85,6 +87,8 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider submitFormDataProvider_Success
+     * @group integration
+     * @group destructive
      */
     public function testSubmitForm_ReturnSuccess($formId, $formData)
     {
@@ -96,6 +100,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider submitFormDataProvider_Error
+     * @group integration
      */
     public function testSubmitForm_ReturnError($formId, $formData)
     {
@@ -177,6 +182,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider getFormByIdDataProvider_Success
+     * @group integration
      */
     public function testGetFormById_ReturnSuccess($formId)
     {
@@ -191,6 +197,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider getFormByIdDataProvider_NotFound
+     * @group integration
      */
     public function testGetFormById_ReturnNotFound($formId)
     {
@@ -221,6 +228,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider listFormsDataProvider_Success
+     * @group integration
      */
     public function testListForms_ReturnSuccess($params)
     {
@@ -235,6 +243,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider listFormsDataProvider_Error
+     * @group integration
      */
     public function testListForms_ReturnError($params)
     {
@@ -256,6 +265,8 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider createFormDataProvider_Success
+     * @group integration
+     * @group destructive
      */
     public function testCreateForm_ReturnSuccess($title, $formJson, $customerId)
     {
@@ -325,6 +336,8 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider updateFormDataProvider_Success
+     * @group integration
+     * @group destructive
      */
     public function testUpdateForm_ReturnSuccess($formId, $attributes)
     {
@@ -339,6 +352,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider updateFormDataProvider_NotFound
+     * @group integration
      */
     public function testUpdateForm_ReturnNotFound($formId, $attributes)
     {
@@ -378,6 +392,8 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider archiveFormDataProvider_Success
+     * @group integration
+     * @group destructive
      */
     public function testArchiveAndUnarchiveForm_ReturnSuccess($formId)
     {
@@ -388,6 +404,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider archiveFormDataProvider_NotFound
+     * @group integration
      */
     public function testArchiveForm_ReturnNotFound($formId)
     {
@@ -398,6 +415,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider archiveFormDataProvider_NotFound
+     * @group integration
      */
     public function testUnarchiveForm_ReturnNotFound($formId)
     {
@@ -426,6 +444,8 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider copyFormDataProvider_Success
+     * @group integration
+     * @group destructive
      */
     public function testCopyForm_ReturnSuccess($formId, $newTitle)
     {
@@ -440,6 +460,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider copyFormDataProvider_NotFound
+     * @group integration
      */
     public function testCopyForm_ReturnNotFound($formId, $newTitle)
     {
@@ -459,6 +480,9 @@ class PauboxFormsTest extends TestCase
         ];
     }
 
+    /**
+     * @group integration
+     */
     public function testGetFormStats_ReturnSuccess()
     {
         $this->skipIfNoApiKey();
@@ -475,6 +499,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider getFormStatsDataProvider_Error
+     * @group integration
      */
     public function testGetFormStats_ReturnError($params)
     {
@@ -504,6 +529,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider listSubmissionsDataProvider_Success
+     * @group integration
      */
     public function testListSubmissions_ReturnSuccess($formId, $params)
     {
@@ -518,6 +544,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider listSubmissionsDataProvider_NotFound
+     * @group integration
      */
     public function testListSubmissions_ReturnNotFound($formId, $params)
     {
@@ -560,6 +587,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider submissionsCsvDataProvider_Success
+     * @group integration
      */
     public function testGetSubmissionsCsv_ReturnSuccess($formId)
     {
@@ -571,6 +599,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider submissionsCsvDataProvider_NotFound
+     * @group integration
      */
     public function testGetSubmissionsCsv_ReturnNotFound($formId)
     {
@@ -581,6 +610,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider submissionCsvDataProvider_Success
+     * @group integration
      */
     public function testGetSubmissionCsv_ReturnSuccess($formId, $submissionId)
     {
@@ -592,6 +622,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider submissionCsvDataProvider_NotFound
+     * @group integration
      */
     public function testGetSubmissionCsv_ReturnNotFound($formId, $submissionId)
     {
@@ -602,6 +633,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider submissionCsvDataProvider_Success
+     * @group integration
      */
     public function testGetSubmissionPdf_ReturnSuccess($formId, $submissionId)
     {
@@ -614,6 +646,7 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider submissionCsvDataProvider_NotFound
+     * @group integration
      */
     public function testGetSubmissionPdf_ReturnNotFound($formId, $submissionId)
     {

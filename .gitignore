@@ -7,3 +7,6 @@ vendor
 
 SendMessage_TestData_*.csv
 composer.lock
+
+.phpunit.cache
+phpunit.xml

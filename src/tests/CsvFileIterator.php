@@ -8,12 +8,21 @@ class CsvFileIterator implements Iterator
     
     public function __construct($file)
     {
-        $this->file = fopen($file, 'r');
+        $handle = @fopen($file, 'r');
+        if ($handle === false) {
+            // Fail loudly. A false handle used to surface as a TypeError from
+            // fclose() inside a data provider, which PHPUnit reports only as
+            // "the data provider is invalid" with no mention of the file.
+            throw new RuntimeException("Unable to open CSV fixture: {$file}");
+        }
+        $this->file = $handle;
     }
-    
+
     public function __destruct()
     {
-        fclose($this->file);
+        if (is_resource($this->file)) {
+            fclose($this->file);
+        }
     }
     
     #[\ReturnTypeWillChange]

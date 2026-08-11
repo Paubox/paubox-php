@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         failOnWarning="true"
+         failOnRisky="true"
+         cacheResultFile=".phpunit.cache/test-results">
+    <testsuites>
+        <testsuite name="paubox-php">
+            <directory>src/tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <!--
+      The default run is offline: no network, no credentials, no live data.
+
+      Two groups are excluded because they cannot run safely or reproducibly on
+      a push:
+
+        integration   Needs a live API, and for most cases a real API key. These
+                      skip silently without one, which is exactly the "green
+                      because it never ran" signal CI exists to catch.
+
+        destructive   Mutates live data or sends real email. These create,
+                      update, archive, and copy real forms, inject real
+                      submissions, and send real messages against whatever host
+                      the SDK points at. Run them deliberately, never on a push.
+
+      To run an excluded group locally, select it by name on the command line
+      (see the "Running the tests" notes in .github/workflows/ci.yml). Read what
+      the destructive group does to live data before running it.
+    -->
+    <groups>
+        <exclude>
+            <group>integration</group>
+            <group>destructive</group>
+        </exclude>
+    </groups>
+</phpunit>
