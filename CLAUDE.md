@@ -33,8 +33,8 @@ composer dump-autoload
 src/
   Paubox.php            Email API client
   PauboxForms.php       Forms API client
-  mail/                 Email data models (Message, Header, Content, Attachment, response types)
-  forms/                Forms data models (Form, FormSubmission, FormAttachment)
+  mail/                 Email request models (Message, Header, Content, Attachment)
+  forms/                Forms request models (FormSubmission, FormAttachment)
   service/
     ApiHelper.php       Thin httpful wrapper (callToAPIByGet, callToAPIByPost, callToAPIByPostWithResponse)
   tests/
@@ -44,7 +44,7 @@ src/
 
 ## Key conventions
 
-- **Data models** live in `src/mail/` or `src/forms/`, use private properties with explicit getters/setters, no constructor args.
+- **Data models** live in `src/mail/` or `src/forms/`, use private properties with explicit getters/setters, no constructor args. They are *request* models only — every API method returns whatever `json_decode()` produced (a `stdClass`), never a typed object. Don't add typed response models unless you also change the clients to populate them.
 - **Namespaces**: `Paubox\`, `Paubox\Mail\`, `Paubox\Forms\`, `Paubox\Service\` (see `composer.json` autoload).
 - **HTTP** is done through `Service\ApiHelper`. Pass `null` for `$auth_header` on unauthenticated endpoints — the helper skips the Authorization header automatically.
 - **Email API base URL**: `https://api.paubox.net/v1/{PAUBOX_API_USER}/` (auth: `Token token={PAUBOX_API_KEY}`)
