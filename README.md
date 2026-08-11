@@ -18,6 +18,20 @@ The API wrapper also allows you to construct and send messages.
   * [Adding Attachments and Additional Headers](#adding-attachments-and-additional-headers)
   * [Checking Email Dispositions](#checking-email-dispositions)
   * [Paubox Forms](#paubox-forms)
+    * [Getting a form](#getting-a-form)
+    * [Submitting a form](#submitting-a-form)
+    * [Submitting a form with file attachments](#submitting-a-form-with-file-attachments)
+    * [Scoped API keys](#scoped-api-keys)
+    * [Getting a form by ID](#getting-a-form-by-id)
+    * [Listing forms](#listing-forms)
+    * [Creating a form](#creating-a-form)
+    * [Updating a form](#updating-a-form)
+    * [Archiving and unarchiving a form](#archiving-and-unarchiving-a-form)
+    * [Copying a form](#copying-a-form)
+    * [Form statistics](#form-statistics)
+    * [Listing submissions](#listing-submissions)
+    * [Downloading submissions as CSV](#downloading-submissions-as-csv)
+    * [Downloading a submission as PDF](#downloading-a-submission-as-pdf)
 * [Contributing](#contributing)
 * [License](#license)
 
@@ -233,7 +247,7 @@ print_r($resp);
 <a name="#paubox-forms"></a>
 ## Paubox Forms
 
-`PauboxForms` provides access to the [Paubox Forms API](https://docs.paubox.com/forms/get-form). No API credentials are required — these endpoints are unauthenticated.
+`PauboxForms` provides access to the [Paubox Forms API](https://docs.paubox.com/forms/get-form). The public endpoints — getting a form definition and submitting a form response — are unauthenticated and need no credentials. The form-management endpoints (listing, creating, updating, archiving, and copying forms, plus retrieving submissions, stats, CSVs, and PDFs) require a scoped API key — see [Scoped API keys](#scoped-api-keys) below.
 
 ### Getting a form
 
@@ -291,6 +305,207 @@ $submission->setFormData(['first_name' => 'Jane', 'last_name' => 'Smith']);
 $submission->setAttachments([$attachment]);
 
 $result = $forms->submitForm('YOUR-FORM-UUID', $submission);
+```
+
+### Scoped API keys
+
+All of the form-management methods below require a Paubox scoped API key with the `forms` scope. Generate one from your Paubox dashboard, then either pass it to the `PauboxForms` constructor or set it in the `PAUBOX_API_KEY` environment variable. The SDK sends it as an `Authorization: Bearer` header.
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+// Option 1: pass the key directly
+$forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY');
+
+// Option 2: use the PAUBOX_API_KEY environment variable
+$forms = new Paubox\PauboxForms();
+```
+
+If no key is configured, calling a management method throws an exception. The public `getForm` and `submitForm` methods never require a key.
+
+### Getting a form by ID
+
+Retrieve a form through the authenticated management endpoint. Unlike the public `getForm`, this also returns inactive and archived forms.
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY');
+
+$form = $forms->getFormById('YOUR-FORM-UUID');
+echo $form->title;
+echo $form->active;
+```
+
+### Listing forms
+
+List your forms with optional filtering, searching, ordering, and pagination. Include `customer_id` (your Paubox customer ID) — the API rejects list requests that don't name the customer the key belongs to. Booleans are handled for you — pass real `true`/`false` values.
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY');
+
+$result = $forms->listForms([
+    'customer_id' => 12345,        // your Paubox customer ID
+    'search'   => 'intake',        // match against form titles
+    'archived' => false,
+    'active'   => true,
+    'order'    => 'desc',          // "asc" or "desc"
+    'order_by' => 'updated_at',    // "title", "updated_at", "submission_count", or "created_at"
+    'page'     => 1,               // 1-based
+    'items'    => 25,              // max 100
+]);
+
+foreach ($result->results as $form) {
+    echo $form->title . "\n";
+}
+print_r($result->page_info); // count, pages, page, items
+```
+
+### Creating a form
+
+Build a `Forms\Form` and call `createForm`. `title`, `formJson`, and `customerId` are required; the other setters are optional. Returns the new form's UUID.
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY');
+
+$form = new Paubox\Forms\Form();
+$form->setTitle('Patient Intake Form');
+$form->setFormJson(['fields' => [['name' => 'first_name', 'type' => 'text']]]);
+$form->setCustomerId(12345);
+$form->setDescription('Collects new patient information');
+$form->setRecipient('intake@yourclinic.com');
+$form->setActive(true);
+
+$newFormId = $forms->createForm($form);
+echo $newFormId; // "NEW-FORM-UUID"
+```
+
+### Updating a form
+
+Partial update — pass an associative array with only the attributes you want to change. Allowed keys: `title`, `description`, `form_json`, `vanity_url`, `recipient`, `active`, `subscription_list_id`. Omitted keys are left unchanged.
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY');
+
+$response = $forms->updateForm('YOUR-FORM-UUID', [
+    'title'  => 'Patient Intake Form (v2)',
+    'active' => false,
+]);
+echo $response->detail; // "Form updated successfully"
+```
+
+### Archiving and unarchiving a form
+
+Both return `true` on success and throw an exception on failure.
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY');
+
+$forms->archiveForm('YOUR-FORM-UUID');
+$forms->unarchiveForm('YOUR-FORM-UUID');
+```
+
+### Copying a form
+
+Duplicate an existing form under a new title. Returns the full new form object.
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY');
+
+$newForm = $forms->copyForm('SOURCE-FORM-UUID', 'Patient Intake Form (Copy)');
+echo $newForm->id;
+echo $newForm->title;
+```
+
+### Form statistics
+
+Get aggregate stats for your forms. `customer_id` is optional and defaults to the customer associated with your API key.
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY');
+
+$stats = $forms->getFormStats();
+// or: $stats = $forms->getFormStats(['customer_id' => 12345]);
+
+echo $stats->active_form_count;
+echo $stats->total_submission_count;
+echo $stats->submissions_last_7_days;
+```
+
+### Listing submissions
+
+List the submissions for a form with optional ordering and pagination.
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY');
+
+$result = $forms->listSubmissions('YOUR-FORM-UUID', [
+    'order'    => 'desc',          // "asc" or "desc"
+    'order_by' => 'created_at',    // "submitter_email" or "created_at"
+    'page'     => 1,
+    'items'    => 25,              // max 100
+]);
+
+foreach ($result->data as $submission) {
+    print_r($submission);
+}
+echo $result->total;
+```
+
+### Downloading submissions as CSV
+
+`getSubmissionsCsv` returns every submission for a form as a CSV string; `getSubmissionCsv` returns a single submission. Save the result to a file or process it directly.
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY');
+
+// All submissions for a form
+$csv = $forms->getSubmissionsCsv('YOUR-FORM-UUID');
+file_put_contents('submissions.csv', $csv);
+
+// A single submission
+$csv = $forms->getSubmissionCsv('YOUR-FORM-UUID', 'SUBMISSION-ID');
+file_put_contents('submission.csv', $csv);
+```
+
+### Downloading a submission as PDF
+
+Returns the PDF as a binary string — write it straight to a file.
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY');
+
+$pdf = $forms->getSubmissionPdf('YOUR-FORM-UUID', 'SUBMISSION-ID');
+file_put_contents('submission.pdf', $pdf);
 ```
 
 <a name="#contributing"></a>
