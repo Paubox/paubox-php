@@ -51,7 +51,7 @@ src/
 - **Forms API base URL**: `https://apx.paubox.com/forms` (public endpoints — get form, submit form — are unauthenticated; management endpoints use a scoped API key with the `forms` scope, sent as `Bearer {PAUBOX_API_KEY}`)
 - HTML content in emails is base64-encoded before sending; plain text is sent as-is.
 - The `*WithResponse()` helpers (`callToAPIByGetWithResponse`, `callToAPIByPostWithResponse`, `callToAPIByPutWithResponse`) return the raw httpful response object (use `->code` and `->raw_body`); `callToAPIByGet`/`callToAPIByPost` return only `->raw_body`.
-- PHPUnit version is `^5.7.9` — use `@expectedException` annotation, not `$this->expectException()`.
+- PHPUnit version is `^9.6.33` — use `$this->expectException()`, not the removed `@expectedException` annotation; `setUp()`/`tearDown()` need `: void` return types.
 
 ## Environment variables
 

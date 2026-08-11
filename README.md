@@ -73,7 +73,7 @@ Paubox.
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::create(__DIR__);
+$dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__);
 $dotenv->load();
 
 $paubox = new Paubox\Paubox();
@@ -108,7 +108,7 @@ This means the message will not be converted into a secure portal message when a
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::create(__DIR__);
+$dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__);
 $dotenv->load();
 
 $paubox = new Paubox\Paubox();
@@ -143,7 +143,7 @@ Instead of receiving an email with the message contents, the recipient will rece
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::create(__DIR__);
+$dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__);
 $dotenv->load();
 
 $paubox = new Paubox\Paubox();
@@ -177,7 +177,7 @@ print_r($sendMessageResponse);
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::create(__DIR__);
+$dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__);
 $dotenv->load();
 
 $paubox = new Paubox\Paubox();
@@ -235,7 +235,7 @@ The SOURCE_TRACKING_ID of a message is returned in the response of the sendMessa
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::create(__DIR__);
+$dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__);
 $dotenv->load();
 
 $paubox = new Paubox\Paubox();

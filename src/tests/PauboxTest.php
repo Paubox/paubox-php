@@ -27,7 +27,7 @@ class PauboxTest extends TestCase
     /**
      * Prepares the environment before running a test.
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->paubox = new Paubox\Paubox();
     }
@@ -35,7 +35,7 @@ class PauboxTest extends TestCase
     /**
      * Cleans up the environment after running a test.
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->paubox = null;
         parent::tearDown();

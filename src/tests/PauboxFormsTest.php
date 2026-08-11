@@ -15,12 +15,12 @@ class PauboxFormsTest extends TestCase
 {
     private $forms;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->forms = new PauboxForms(getenv('PAUBOX_API_KEY') ?: null);
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->forms = null;
         parent::tearDown();
@@ -62,10 +62,10 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider getFormDataProvider_NotFound
-     * @expectedException \Exception
      */
     public function testGetForm_ReturnNotFound($formId)
     {
+        $this->expectException(\Exception::class);
         $this->forms->getForm($formId);
     }
 
@@ -96,10 +96,10 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider submitFormDataProvider_Error
-     * @expectedException \Exception
      */
     public function testSubmitForm_ReturnError($formId, $formData)
     {
+        $this->expectException(\Exception::class);
         $submission = new FormSubmission();
         $submission->setFormData($formData);
         $this->forms->submitForm($formId, $submission);
@@ -147,7 +147,7 @@ class PauboxFormsTest extends TestCase
                 call_user_func_array([$keylessClient, $method], $args);
             } catch (\Exception $e) {
                 $caught = true;
-                $this->assertContains("scoped API key", $e->getMessage());
+                $this->assertStringContainsString("scoped API key", $e->getMessage());
             }
             $this->assertTrue($caught, "Expected \\Exception when calling $method() without an API key.");
         } finally {
@@ -191,11 +191,11 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider getFormByIdDataProvider_NotFound
-     * @expectedException \Exception
      */
     public function testGetFormById_ReturnNotFound($formId)
     {
         $this->skipIfNoApiKey();
+        $this->expectException(\Exception::class);
         $this->forms->getFormById($formId);
     }
 
@@ -235,11 +235,11 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider listFormsDataProvider_Error
-     * @expectedException \Exception
      */
     public function testListForms_ReturnError($params)
     {
         $this->skipIfNoApiKey();
+        $this->expectException(\Exception::class);
         $this->forms->listForms($params);
     }
 
@@ -298,10 +298,10 @@ class PauboxFormsTest extends TestCase
      * network access or credentials and must never be skipped.
      *
      * @dataProvider createFormValidationDataProvider
-     * @expectedException \Exception
      */
     public function testCreateForm_ThrowsOnMissingRequiredField($form)
     {
+        $this->expectException(\Exception::class);
         $this->forms->createForm($form);
     }
 
@@ -339,11 +339,11 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider updateFormDataProvider_NotFound
-     * @expectedException \Exception
      */
     public function testUpdateForm_ReturnNotFound($formId, $attributes)
     {
         $this->skipIfNoApiKey();
+        $this->expectException(\Exception::class);
         $this->forms->updateForm($formId, $attributes);
     }
 
@@ -351,10 +351,10 @@ class PauboxFormsTest extends TestCase
      * The allowed-keys filter throws before any HTTP call, so this runs
      * without network access or credentials and must never be skipped.
      *
-     * @expectedException \Exception
      */
     public function testUpdateForm_ThrowsWhenNoAllowedAttributes()
     {
+        $this->expectException(\Exception::class);
         $this->forms->updateForm('00000000-0000-0000-0000-000000000000', ['bogus_key' => 'value']);
     }
 
@@ -388,21 +388,21 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider archiveFormDataProvider_NotFound
-     * @expectedException \Exception
      */
     public function testArchiveForm_ReturnNotFound($formId)
     {
         $this->skipIfNoApiKey();
+        $this->expectException(\Exception::class);
         $this->forms->archiveForm($formId);
     }
 
     /**
      * @dataProvider archiveFormDataProvider_NotFound
-     * @expectedException \Exception
      */
     public function testUnarchiveForm_ReturnNotFound($formId)
     {
         $this->skipIfNoApiKey();
+        $this->expectException(\Exception::class);
         $this->forms->unarchiveForm($formId);
     }
 
@@ -440,11 +440,11 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider copyFormDataProvider_NotFound
-     * @expectedException \Exception
      */
     public function testCopyForm_ReturnNotFound($formId, $newTitle)
     {
         $this->skipIfNoApiKey();
+        $this->expectException(\Exception::class);
         $this->forms->copyForm($formId, $newTitle);
     }
 
@@ -475,11 +475,11 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider getFormStatsDataProvider_Error
-     * @expectedException \Exception
      */
     public function testGetFormStats_ReturnError($params)
     {
         $this->skipIfNoApiKey();
+        $this->expectException(\Exception::class);
         $this->forms->getFormStats($params);
     }
 
@@ -518,11 +518,11 @@ class PauboxFormsTest extends TestCase
 
     /**
      * @dataProvider listSubmissionsDataProvider_NotFound
-     * @expectedException \Exception
      */
     public function testListSubmissions_ReturnNotFound($formId, $params)
     {
         $this->skipIfNoApiKey();
+        $this->expectException(\Exception::class);
         $this->forms->listSubmissions($formId, $params);
     }
 
@@ -565,17 +565,17 @@ class PauboxFormsTest extends TestCase
     {
         $this->skipIfNoApiKey();
         $csv = $this->forms->getSubmissionsCsv($formId);
-        $this->assertInternalType('string', $csv);
+        $this->assertIsString($csv);
         $this->assertNotEmpty($csv);
     }
 
     /**
      * @dataProvider submissionsCsvDataProvider_NotFound
-     * @expectedException \Exception
      */
     public function testGetSubmissionsCsv_ReturnNotFound($formId)
     {
         $this->skipIfNoApiKey();
+        $this->expectException(\Exception::class);
         $this->forms->getSubmissionsCsv($formId);
     }
 
@@ -586,17 +586,17 @@ class PauboxFormsTest extends TestCase
     {
         $this->skipIfNoApiKey();
         $csv = $this->forms->getSubmissionCsv($formId, $submissionId);
-        $this->assertInternalType('string', $csv);
+        $this->assertIsString($csv);
         $this->assertNotEmpty($csv);
     }
 
     /**
      * @dataProvider submissionCsvDataProvider_NotFound
-     * @expectedException \Exception
      */
     public function testGetSubmissionCsv_ReturnNotFound($formId, $submissionId)
     {
         $this->skipIfNoApiKey();
+        $this->expectException(\Exception::class);
         $this->forms->getSubmissionCsv($formId, $submissionId);
     }
 
@@ -607,18 +607,18 @@ class PauboxFormsTest extends TestCase
     {
         $this->skipIfNoApiKey();
         $pdf = $this->forms->getSubmissionPdf($formId, $submissionId);
-        $this->assertInternalType('string', $pdf);
+        $this->assertIsString($pdf);
         $this->assertNotEmpty($pdf);
         $this->assertSame('%PDF', substr($pdf, 0, 4));
     }
 
     /**
      * @dataProvider submissionCsvDataProvider_NotFound
-     * @expectedException \Exception
      */
     public function testGetSubmissionPdf_ReturnNotFound($formId, $submissionId)
     {
         $this->skipIfNoApiKey();
+        $this->expectException(\Exception::class);
         $this->forms->getSubmissionPdf($formId, $submissionId);
     }
 }
