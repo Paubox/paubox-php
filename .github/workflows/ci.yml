@@ -27,7 +27,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0', '8.1', '8.2', '8.3']
+        # 8.1 is the real floor, not a preference. nategood/httpful is pinned at
+        # "*", and on PHP < 8.1 the package cannot be installed at all:
+        #
+        #   - 1.0.0 is the only candidate "*" considers, and it requires php >= 8.1
+        #   - every 0.x release is blocked by advisory PKSA-4dtf-ym9h-t41j /
+        #     GHSA-gcfg-hmwx-wq5h ("Insecure HTTPS Connections due to Missing
+        #     Default Certificate Validation", affects < 1.0.0), which composer
+        #     refuses to install by default
+        #
+        # So `composer update` exits 2 on 7.4 and 8.0 with an error that blames a
+        # transitive dependency. composer.json should declare "php": ">=8.1" to
+        # make that a clear, up-front constraint instead.
+        php: ['8.1', '8.2', '8.3']
 
     steps:
       - uses: actions/checkout@v4
@@ -47,10 +59,11 @@ jobs:
       - name: Install dependencies
         run: composer update --no-interaction --no-progress --prefer-dist
 
-      # nategood/httpful is pinned at "*" and its 1.0.0 release requires PHP
-      # >= 8.1, so PHP 7.4 and 8.0 resolve 0.3.2 instead. The two releases ship
-      # opposite TLS defaults ($strict_ssl false in 0.3.2, true in 1.0.0), so
-      # print what actually got installed rather than assuming.
+      # Record which HTTP client actually got installed. Only 1.0.0 sets
+      # $strict_ssl = true by default; every 0.x release ships it false and is
+      # covered by GHSA-gcfg-hmwx-wq5h. If this ever prints a 0.x — because a
+      # lock file pins one, or advisory blocking was disabled — TLS certificate
+      # verification is off for every request this SDK makes.
       - name: Report resolved HTTP client
         run: composer show nategood/httpful | grep -E '^(name|versions)'
 
