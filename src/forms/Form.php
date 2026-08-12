@@ -13,10 +13,13 @@ class Form
     private $version;
     private $active;
     private $customerId;
+    private $oldFormId;
     private $signable;
     private $signatureConfirmationLabel;
     private $submissionCount;
     private $type;
+    private $recipient;
+    private $subscriptionListId;
     private $deleted;
     private $archived;
     private $createdAt;
@@ -52,6 +55,9 @@ class Form
     public function getCustomerId() { return $this->customerId; }
     public function setCustomerId($customerId) { $this->customerId = $customerId; }
 
+    public function getOldFormId() { return $this->oldFormId; }
+    public function setOldFormId($oldFormId) { $this->oldFormId = $oldFormId; }
+
     public function getSignable() { return $this->signable; }
     public function setSignable($signable) { $this->signable = $signable; }
 
@@ -63,6 +69,12 @@ class Form
 
     public function getType() { return $this->type; }
     public function setType($type) { $this->type = $type; }
+
+    public function getRecipient() { return $this->recipient; }
+    public function setRecipient($recipient) { $this->recipient = $recipient; }
+
+    public function getSubscriptionListId() { return $this->subscriptionListId; }
+    public function setSubscriptionListId($subscriptionListId) { $this->subscriptionListId = $subscriptionListId; }
 
     public function getDeleted() { return $this->deleted; }
     public function setDeleted($deleted) { $this->deleted = $deleted; }
