@@ -3,6 +3,7 @@ namespace Paubox\Service;
 
 class ApiHelper
 {
+    const REQUEST_TIMEOUT_SECONDS = 30;
 
     function callToAPIByPost($uri, $auth_header, $request_body)
     {
@@ -15,6 +16,8 @@ class ApiHelper
         $response = \Httpful\Request::post($uri)->sendsJson()
             ->addHeaders($header)
             ->body($request_body)
+            ->timeout(self::REQUEST_TIMEOUT_SECONDS)
+            ->strictSSL(true)
             ->send();
 
         return $response->raw_body;
@@ -29,6 +32,8 @@ class ApiHelper
 
         $response = \Httpful\Request::get($uri)->sendsJson()
             ->addHeaders($header)
+            ->timeout(self::REQUEST_TIMEOUT_SECONDS)
+            ->strictSSL(true)
             ->send();
 
         return $response->raw_body;
@@ -44,6 +49,8 @@ class ApiHelper
         $response = \Httpful\Request::post($uri)->sendsJson()
             ->addHeaders($header)
             ->body($request_body)
+            ->timeout(self::REQUEST_TIMEOUT_SECONDS)
+            ->strictSSL(true)
             ->send();
 
         return $response;
@@ -58,6 +65,8 @@ class ApiHelper
 
         $response = \Httpful\Request::get($uri)->sendsJson()
             ->addHeaders($header)
+            ->timeout(self::REQUEST_TIMEOUT_SECONDS)
+            ->strictSSL(true)
             ->send();
 
         return $response;
@@ -73,6 +82,8 @@ class ApiHelper
         $response = \Httpful\Request::put($uri)->sendsJson()
             ->addHeaders($header)
             ->body($request_body)
+            ->timeout(self::REQUEST_TIMEOUT_SECONDS)
+            ->strictSSL(true)
             ->send();
 
         return $response;
