@@ -59,7 +59,6 @@ Include your API credentials in your environment file.
 
 ```bash
 $ echo "export PAUBOX_API_KEY='YOUR_API_KEY'" > .env
-$ echo "export PAUBOX_API_USER='YOUR_ENDPOINT_NAME'" >> .env
 $ source .env
 $ echo ".env" >> .gitignore
 ```
@@ -314,10 +313,9 @@ $result = $forms->submitForm('YOUR-FORM-UUID', $submission);
 
 All of the form-management methods below require a Paubox scoped API key with the `forms` scope. Generate one from your Paubox dashboard, then either pass it to the `PauboxForms` constructor or set it in the `PAUBOX_FORMS_API_KEY` environment variable. The SDK sends it as an `Authorization: Bearer` header.
 
-**Important:** `PAUBOX_FORMS_API_KEY` is a *different* credential from the transactional Email API key (`PAUBOX_API_KEY`). Do not reuse the same value for both — the email client sends `PAUBOX_API_KEY` as `Token token=` to `api.paubox.net`, while `PauboxForms` sends `PAUBOX_FORMS_API_KEY` as `Authorization: Bearer` to `apx.paubox.com/forms`. Mixing them misdelivers a credential to the wrong endpoint. Configure both independently:
+**Important:** `PAUBOX_FORMS_API_KEY` is a *different* credential from the transactional Email API key (`PAUBOX_API_KEY`). Do not reuse the same value for both — although both are sent as `Authorization: Bearer` headers, they go to different hosts: the email client sends `PAUBOX_API_KEY` to `https://api.paubox.com/v1/email`, while `PauboxForms` sends `PAUBOX_FORMS_API_KEY` to `apx.paubox.com/forms`. Mixing them misdelivers a credential to the wrong endpoint. Configure both independently:
 
 ```bash
-echo "export PAUBOX_API_USER='YOUR_EMAIL_LOGIN'"           >> .env
 echo "export PAUBOX_API_KEY='YOUR_EMAIL_API_KEY'"          >> .env
 echo "export PAUBOX_FORMS_API_KEY='YOUR_FORMS_SCOPED_KEY'" >> .env
 ```

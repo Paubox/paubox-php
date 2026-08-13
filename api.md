@@ -2,8 +2,8 @@
 
 ## Email API (`Paubox\Paubox`)
 
-Base URL: `https://api.paubox.net/v1/{PAUBOX_API_USER}/`  
-Authentication: `Authorization: Token token={PAUBOX_API_KEY}`
+Base URL: `https://api.paubox.com/v1/email`  
+Authentication: `Authorization: Bearer {PAUBOX_API_KEY}`
 
 ---
 
@@ -70,7 +70,7 @@ errors  array
 ## Forms API (`Paubox\PauboxForms`)
 
 Base URL: `https://apx.paubox.com/forms`  
-Authentication: None
+Authentication: None for the public endpoints documented here; form-management endpoints use `Authorization: Bearer {PAUBOX_FORMS_API_KEY}` (see README)
 
 ---
 
