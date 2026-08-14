@@ -2,12 +2,12 @@
 
 # Paubox PHP
 
-**NEW:** [Version 2 of the Paubox Email API SDK for PHP](https://github.com/Paubox/paubox-php/tree/sdk-generation/v2.0.0-beta) is available to beta test now. It includes code for newer features like bulk message sending, dynamic templates, and more. We will be deprecating the old in the near future.
-
-This is the official PHP wrapper for the [Paubox Email API](https://www.paubox.com/products/paubox-email-api). 
+This is the official PHP wrapper for the [Paubox Email API](https://www.paubox.com/products/paubox-email-api) and the [Paubox Forms API](https://docs.paubox.com/forms/get-form).
 
 The Paubox Email API allows your application to send secure, HIPAA compliant email via Paubox and track deliveries and opens.
 The API wrapper also allows you to construct and send messages.
+
+Paubox Forms support lets you retrieve form definitions, submit form responses (including file attachments), and manage forms and their submissions — see [Paubox Forms](#paubox-forms) below.
 
 # Table of Contents
 * [Installation](#installation)
