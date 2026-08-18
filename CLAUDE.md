@@ -15,11 +15,92 @@ composer install
 ## Run tests
 
 ```bash
-vendor/bin/phpunit src/tests/PauboxTest.php
+# Offline — no credentials, no outbound requests. The pre-PR default.
 vendor/bin/phpunit src/tests/PauboxFormsTest.php
+
+# Read-only integration — needs PAUBOX_FORMS_API_KEY + QA_* fixtures
+vendor/bin/phpunit --group network src/tests/PauboxFormsTest.php
+
+# Writes to the target Forms API — QA customer only, never production
+vendor/bin/phpunit --group mutating src/tests/PauboxFormsTest.php
+
+# Email suite: real HTTP calls, requires PAUBOX_API_KEY
+vendor/bin/phpunit src/tests/PauboxTest.php
 ```
 
-Email tests make real HTTP calls and require the `PAUBOX_API_KEY` env var. The default Forms suite is offline and needs no credentials; the `network`/`mutating` Forms groups require `PAUBOX_FORMS_API_KEY` plus the `QA_*` env vars (see README "Running the tests").
+The default Forms suite is offline and needs no credentials — `phpunit.xml` excludes the
+`network` and `mutating` groups. The Email suite has no such split: it makes real calls and
+requires `PAUBOX_API_KEY`. See README "Running the tests" for the `QA_*` fixture variables.
+
+## Testing requirements (mandatory for every change)
+
+No change merges without both layers of coverage. "It's a small change" is not an
+exemption — a one-line constant swap still needs the offline assertion that pins the
+new value.
+
+### Both layers, every time
+
+| Layer | Runs | Network | Must cover |
+|---|---|---|---|
+| **Unit** | default suite, no credentials | never | argument validation, URL construction, request-body shaping, response parsing, every `throw` path |
+| **Integration** | `--group network` (read-only) or `--group mutating` (writes) | yes | real status codes, real response shapes, auth handling, round-trip behavior |
+
+A unit test that cannot run without a socket is an integration test — tag it as one.
+
+### Group tagging is a hard rule
+
+Every test that opens a socket **must** carry `@group network` (read-only) or
+`@group mutating` (creates/updates/archives/deletes). Untagged means offline, and
+`phpunit.xml` excludes both groups so a bare `vendor/bin/phpunit` never touches a
+remote host — even with `PAUBOX_FORMS_API_KEY` and the `QA_*` vars exported.
+
+`markTestSkipped` is not a substitute for a group tag. Skipping when a credential is
+absent says nothing about what happens when it is present; only the tag keeps the
+default suite offline.
+
+Before opening a PR, verify the contract holds with credentials loaded:
+
+```bash
+vendor/bin/phpunit src/tests/PauboxFormsTest.php   # must make zero outbound requests
+```
+
+### Coverage checklist for a new or changed client method
+
+Every box needs a test, offline unless marked:
+
+- [ ] rejects each invalid argument (bad UUID, null required field, empty update set)
+- [ ] builds the expected URL, including query-string allowlisting and encoding
+- [ ] builds the expected request body — and **omits** optional fields the caller never set
+- [ ] returns the documented success shape
+- [ ] throws `PauboxFormsException` on a non-success status, with `getStatusCode()`
+      populated
+- [ ] throws `PauboxFormsException` — not a transport exception — when the host is
+      unreachable
+- [ ] *(integration)* success path against a QA fixture
+- [ ] *(integration)* documented failure path (404 / 403) returns the status the unit
+      tests assume
+
+The last two boxes are what catch a wrong endpoint path or an unexpected status code;
+offline tests assert our assumptions, integration tests check the API shares them.
+
+### Asserting on URLs and bodies without a network
+
+Point the client at a local sink rather than mocking `ApiHelper`:
+
+```php
+$forms = new PauboxForms('test-key', 'http://127.0.0.1:8888');
+```
+
+This keeps `buildQuery`, `rawurlencode`, and `rtrim` under test — the logic most likely
+to break on a base-URL or endpoint change.
+
+### When an endpoint's contract changes
+
+A base-URL move, a path change, or a status-code change is not done until an
+integration test has run against the real host. Offline tests only prove the SDK does
+what we told it to; they cannot detect that we told it the wrong thing. State
+explicitly in the PR whether the integration groups were run, and against which
+environment.
 
 ## Regenerate autoloader
 
