@@ -350,8 +350,8 @@ try {
     error_log('Forms update failed: ' . $e->getMessage());
     // Read the body explicitly — do NOT log $e->getMessage() alone if
     // the caller might echo the exception unfiltered.
-    if ($e->getStatusCode() === 403) {
-        // handle forbidden
+    if ($e->getStatusCode() === 401) {
+        // handle unauthorized (missing, invalid, or wrong-scope key)
     }
 }
 ```
