@@ -63,6 +63,13 @@ class PauboxFormsTest extends TestCase
         return $value;
     }
 
+    private function skipIfNoWrongScopeKey()
+    {
+        if (!getenv('PAUBOX_FORMS_WRONG_SCOPE_KEY')) {
+            $this->markTestSkipped('PAUBOX_FORMS_WRONG_SCOPE_KEY is not set; skipping wrong-scope auth test.');
+        }
+    }
+
     // ------------------------------------------------------------------
     // Missing API key — no network, must never be skipped
     // ------------------------------------------------------------------
@@ -307,6 +314,25 @@ class PauboxFormsTest extends TestCase
         $this->skipIfNoApiKey();
         $this->expectException(PauboxFormsException::class);
         $this->forms->getFormById('00000000-0000-0000-0000-000000000000');
+    }
+
+    /**
+     * @group network
+     */
+    public function testGetFormById_WrongScopeKey_ReturnsUnauthorized()
+    {
+        // README documents a getStatusCode() === 403 pattern for scope failures;
+        // live behavior is 401. Pins the real code so a regression (or a doc fix)
+        // is caught, not silently trusted from the README.
+        $this->skipIfNoWrongScopeKey();
+        $formId = $this->requireFixture('QA_TEST_FORM_UUID');
+        $wrongScopeForms = new PauboxForms(getenv('PAUBOX_FORMS_WRONG_SCOPE_KEY'));
+        try {
+            $wrongScopeForms->getFormById($formId);
+            $this->fail('Expected PauboxFormsException for a key without the forms scope.');
+        } catch (PauboxFormsException $e) {
+            $this->assertSame(401, $e->getStatusCode());
+        }
     }
 
     // ------------------------------------------------------------------
