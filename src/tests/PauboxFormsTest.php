@@ -234,6 +234,9 @@ class PauboxFormsTest extends TestCase
     // Public getForm / submitForm (no auth)
     // ------------------------------------------------------------------
 
+    /**
+     * @group network
+     */
     public function testGetForm_ReturnSuccess()
     {
         $formId = $this->requireFixture('QA_TEST_FORM_UUID');
@@ -283,6 +286,9 @@ class PauboxFormsTest extends TestCase
     // getFormById
     // ------------------------------------------------------------------
 
+    /**
+     * @group network
+     */
     public function testGetFormById_ReturnSuccess()
     {
         $this->skipIfNoApiKey();
@@ -293,6 +299,9 @@ class PauboxFormsTest extends TestCase
         $this->assertTrue(isset($form->title));
     }
 
+    /**
+     * @group network
+     */
     public function testGetFormById_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
@@ -304,6 +313,9 @@ class PauboxFormsTest extends TestCase
     // listForms (read-only)
     // ------------------------------------------------------------------
 
+    /**
+     * @group network
+     */
     public function testListForms_ReturnSuccess_WithCustomerId()
     {
         $this->skipIfNoApiKey();
@@ -315,6 +327,9 @@ class PauboxFormsTest extends TestCase
         $this->assertIsArray($result->results);
     }
 
+    /**
+     * @group network
+     */
     public function testListForms_ReturnSuccess_WithPagination()
     {
         $this->skipIfNoApiKey();
@@ -330,6 +345,9 @@ class PauboxFormsTest extends TestCase
         $this->assertIsArray($result->results);
     }
 
+    /**
+     * @group network
+     */
     public function testListForms_ThrowsWithoutCustomerId()
     {
         $this->skipIfNoApiKey();
@@ -433,6 +451,9 @@ class PauboxFormsTest extends TestCase
         }
     }
 
+    /**
+     * @group network
+     */
     public function testUpdateForm_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
@@ -502,6 +523,9 @@ class PauboxFormsTest extends TestCase
         }
     }
 
+    /**
+     * @group network
+     */
     public function testArchiveForm_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
@@ -509,6 +533,9 @@ class PauboxFormsTest extends TestCase
         $this->forms->archiveForm('00000000-0000-0000-0000-000000000000');
     }
 
+    /**
+     * @group network
+     */
     public function testUnarchiveForm_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
@@ -546,6 +573,9 @@ class PauboxFormsTest extends TestCase
         }
     }
 
+    /**
+     * @group network
+     */
     public function testCopyForm_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
@@ -557,6 +587,9 @@ class PauboxFormsTest extends TestCase
     // getFormStats (read-only)
     // ------------------------------------------------------------------
 
+    /**
+     * @group network
+     */
     public function testGetFormStats_ReturnSuccess()
     {
         $this->skipIfNoApiKey();
@@ -568,6 +601,9 @@ class PauboxFormsTest extends TestCase
         $this->assertTrue(isset($stats->submissions_last_7_days));
     }
 
+    /**
+     * @group network
+     */
     public function testGetFormStats_ReturnError()
     {
         $this->skipIfNoApiKey();
@@ -579,6 +615,9 @@ class PauboxFormsTest extends TestCase
     // listSubmissions (read-only)
     // ------------------------------------------------------------------
 
+    /**
+     * @group network
+     */
     public function testListSubmissions_ReturnSuccess()
     {
         $this->skipIfNoApiKey();
@@ -590,6 +629,9 @@ class PauboxFormsTest extends TestCase
         $this->assertIsArray($result->data);
     }
 
+    /**
+     * @group network
+     */
     public function testListSubmissions_ReturnSuccess_WithPagination()
     {
         $this->skipIfNoApiKey();
@@ -604,6 +646,9 @@ class PauboxFormsTest extends TestCase
         $this->assertIsArray($result->data);
     }
 
+    /**
+     * @group network
+     */
     public function testListSubmissions_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
@@ -615,6 +660,9 @@ class PauboxFormsTest extends TestCase
     // getSubmissionsCsv / getSubmissionCsv / getSubmissionPdf (read-only)
     // ------------------------------------------------------------------
 
+    /**
+     * @group network
+     */
     public function testGetSubmissionsCsv_ReturnSuccess()
     {
         $this->skipIfNoApiKey();
@@ -624,6 +672,9 @@ class PauboxFormsTest extends TestCase
         $this->assertNotEmpty($csv);
     }
 
+    /**
+     * @group network
+     */
     public function testGetSubmissionsCsv_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
@@ -631,6 +682,9 @@ class PauboxFormsTest extends TestCase
         $this->forms->getSubmissionsCsv('00000000-0000-0000-0000-000000000000');
     }
 
+    /**
+     * @group network
+     */
     public function testGetSubmissionCsv_ReturnSuccess()
     {
         $this->skipIfNoApiKey();
@@ -641,6 +695,9 @@ class PauboxFormsTest extends TestCase
         $this->assertNotEmpty($csv);
     }
 
+    /**
+     * @group network
+     */
     public function testGetSubmissionCsv_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
@@ -649,6 +706,9 @@ class PauboxFormsTest extends TestCase
         $this->forms->getSubmissionCsv($formId, '00000000-0000-0000-0000-000000000000');
     }
 
+    /**
+     * @group network
+     */
     public function testGetSubmissionPdf_ReturnSuccess()
     {
         $this->skipIfNoApiKey();
@@ -660,6 +720,9 @@ class PauboxFormsTest extends TestCase
         $this->assertSame('%PDF', substr($pdf, 0, 4));
     }
 
+    /**
+     * @group network
+     */
     public function testGetSubmissionPdf_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
