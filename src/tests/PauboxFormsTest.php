@@ -63,6 +63,13 @@ class PauboxFormsTest extends TestCase
         return $value;
     }
 
+    private function skipIfNoWrongScopeKey()
+    {
+        if (!getenv('PAUBOX_FORMS_WRONG_SCOPE_KEY')) {
+            $this->markTestSkipped('PAUBOX_FORMS_WRONG_SCOPE_KEY is not set; skipping wrong-scope auth test.');
+        }
+    }
+
     // ------------------------------------------------------------------
     // Missing API key — no network, must never be skipped
     // ------------------------------------------------------------------
@@ -234,6 +241,9 @@ class PauboxFormsTest extends TestCase
     // Public getForm / submitForm (no auth)
     // ------------------------------------------------------------------
 
+    /**
+     * @group network
+     */
     public function testGetForm_ReturnSuccess()
     {
         $formId = $this->requireFixture('QA_TEST_FORM_UUID');
@@ -283,6 +293,9 @@ class PauboxFormsTest extends TestCase
     // getFormById
     // ------------------------------------------------------------------
 
+    /**
+     * @group network
+     */
     public function testGetFormById_ReturnSuccess()
     {
         $this->skipIfNoApiKey();
@@ -293,6 +306,9 @@ class PauboxFormsTest extends TestCase
         $this->assertTrue(isset($form->title));
     }
 
+    /**
+     * @group network
+     */
     public function testGetFormById_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
@@ -300,10 +316,32 @@ class PauboxFormsTest extends TestCase
         $this->forms->getFormById('00000000-0000-0000-0000-000000000000');
     }
 
+    /**
+     * @group network
+     */
+    public function testGetFormById_WrongScopeKey_ReturnsUnauthorized()
+    {
+        // README documents a getStatusCode() === 403 pattern for scope failures;
+        // live behavior is 401. Pins the real code so a regression (or a doc fix)
+        // is caught, not silently trusted from the README.
+        $this->skipIfNoWrongScopeKey();
+        $formId = $this->requireFixture('QA_TEST_FORM_UUID');
+        $wrongScopeForms = new PauboxForms(getenv('PAUBOX_FORMS_WRONG_SCOPE_KEY'));
+        try {
+            $wrongScopeForms->getFormById($formId);
+            $this->fail('Expected PauboxFormsException for a key without the forms scope.');
+        } catch (PauboxFormsException $e) {
+            $this->assertSame(401, $e->getStatusCode());
+        }
+    }
+
     // ------------------------------------------------------------------
     // listForms (read-only)
     // ------------------------------------------------------------------
 
+    /**
+     * @group network
+     */
     public function testListForms_ReturnSuccess_WithCustomerId()
     {
         $this->skipIfNoApiKey();
@@ -315,6 +353,9 @@ class PauboxFormsTest extends TestCase
         $this->assertIsArray($result->results);
     }
 
+    /**
+     * @group network
+     */
     public function testListForms_ReturnSuccess_WithPagination()
     {
         $this->skipIfNoApiKey();
@@ -330,6 +371,9 @@ class PauboxFormsTest extends TestCase
         $this->assertIsArray($result->results);
     }
 
+    /**
+     * @group network
+     */
     public function testListForms_ThrowsWithoutCustomerId()
     {
         $this->skipIfNoApiKey();
@@ -433,6 +477,9 @@ class PauboxFormsTest extends TestCase
         }
     }
 
+    /**
+     * @group network
+     */
     public function testUpdateForm_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
@@ -502,6 +549,9 @@ class PauboxFormsTest extends TestCase
         }
     }
 
+    /**
+     * @group network
+     */
     public function testArchiveForm_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
@@ -509,6 +559,9 @@ class PauboxFormsTest extends TestCase
         $this->forms->archiveForm('00000000-0000-0000-0000-000000000000');
     }
 
+    /**
+     * @group network
+     */
     public function testUnarchiveForm_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
@@ -546,6 +599,9 @@ class PauboxFormsTest extends TestCase
         }
     }
 
+    /**
+     * @group network
+     */
     public function testCopyForm_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
@@ -557,6 +613,9 @@ class PauboxFormsTest extends TestCase
     // getFormStats (read-only)
     // ------------------------------------------------------------------
 
+    /**
+     * @group network
+     */
     public function testGetFormStats_ReturnSuccess()
     {
         $this->skipIfNoApiKey();
@@ -568,6 +627,9 @@ class PauboxFormsTest extends TestCase
         $this->assertTrue(isset($stats->submissions_last_7_days));
     }
 
+    /**
+     * @group network
+     */
     public function testGetFormStats_ReturnError()
     {
         $this->skipIfNoApiKey();
@@ -579,6 +641,9 @@ class PauboxFormsTest extends TestCase
     // listSubmissions (read-only)
     // ------------------------------------------------------------------
 
+    /**
+     * @group network
+     */
     public function testListSubmissions_ReturnSuccess()
     {
         $this->skipIfNoApiKey();
@@ -590,6 +655,9 @@ class PauboxFormsTest extends TestCase
         $this->assertIsArray($result->data);
     }
 
+    /**
+     * @group network
+     */
     public function testListSubmissions_ReturnSuccess_WithPagination()
     {
         $this->skipIfNoApiKey();
@@ -604,6 +672,9 @@ class PauboxFormsTest extends TestCase
         $this->assertIsArray($result->data);
     }
 
+    /**
+     * @group network
+     */
     public function testListSubmissions_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
@@ -615,6 +686,9 @@ class PauboxFormsTest extends TestCase
     // getSubmissionsCsv / getSubmissionCsv / getSubmissionPdf (read-only)
     // ------------------------------------------------------------------
 
+    /**
+     * @group network
+     */
     public function testGetSubmissionsCsv_ReturnSuccess()
     {
         $this->skipIfNoApiKey();
@@ -624,6 +698,9 @@ class PauboxFormsTest extends TestCase
         $this->assertNotEmpty($csv);
     }
 
+    /**
+     * @group network
+     */
     public function testGetSubmissionsCsv_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
@@ -631,6 +708,9 @@ class PauboxFormsTest extends TestCase
         $this->forms->getSubmissionsCsv('00000000-0000-0000-0000-000000000000');
     }
 
+    /**
+     * @group network
+     */
     public function testGetSubmissionCsv_ReturnSuccess()
     {
         $this->skipIfNoApiKey();
@@ -641,6 +721,9 @@ class PauboxFormsTest extends TestCase
         $this->assertNotEmpty($csv);
     }
 
+    /**
+     * @group network
+     */
     public function testGetSubmissionCsv_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
@@ -649,6 +732,9 @@ class PauboxFormsTest extends TestCase
         $this->forms->getSubmissionCsv($formId, '00000000-0000-0000-0000-000000000000');
     }
 
+    /**
+     * @group network
+     */
     public function testGetSubmissionPdf_ReturnSuccess()
     {
         $this->skipIfNoApiKey();
@@ -660,6 +746,9 @@ class PauboxFormsTest extends TestCase
         $this->assertSame('%PDF', substr($pdf, 0, 4));
     }
 
+    /**
+     * @group network
+     */
     public function testGetSubmissionPdf_ReturnNotFound()
     {
         $this->skipIfNoApiKey();
