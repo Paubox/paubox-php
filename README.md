@@ -313,7 +313,7 @@ $result = $forms->submitForm('YOUR-FORM-UUID', $submission);
 
 All of the form-management methods below require a Paubox scoped API key with the `forms` scope. Generate one from your Paubox dashboard, then either pass it to the `PauboxForms` constructor or set it in the `PAUBOX_FORMS_API_KEY` environment variable. The SDK sends it as an `Authorization: Bearer` header.
 
-**Important:** `PAUBOX_FORMS_API_KEY` is a *different* credential from the transactional Email API key (`PAUBOX_API_KEY`). Do not reuse the same value for both — although both are sent as `Authorization: Bearer` headers, they go to different hosts: the email client sends `PAUBOX_API_KEY` to `https://api.paubox.com/v1/email`, while `PauboxForms` sends `PAUBOX_FORMS_API_KEY` to `apx.paubox.com/forms`. Mixing them misdelivers a credential to the wrong endpoint. Configure both independently:
+**Important:** `PAUBOX_FORMS_API_KEY` is a *different* credential from the transactional Email API key (`PAUBOX_API_KEY`). Do not reuse the same value for both — although both are sent as `Authorization: Bearer` headers to the same host, they are scoped to different APIs: the email client sends `PAUBOX_API_KEY` to `https://api.paubox.com/v1/email`, while `PauboxForms` sends `PAUBOX_FORMS_API_KEY` to `https://api.paubox.com/v1/forms`. Mixing them misdelivers a credential to the wrong endpoint. Configure both independently:
 
 ```bash
 echo "export PAUBOX_API_KEY='YOUR_EMAIL_API_KEY'"          >> .env
@@ -331,7 +331,7 @@ $forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY');
 $forms = new Paubox\PauboxForms();
 ```
 
-Optionally, override the target endpoint with a constructor argument or the `PAUBOX_FORMS_BASE_URL` environment variable. Defaults to `https://apx.paubox.com/forms`:
+Optionally, override the target endpoint with a constructor argument or the `PAUBOX_FORMS_BASE_URL` environment variable. Defaults to `https://api.paubox.com/v1/forms`:
 
 ```php
 $forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY', 'https://staging-forms.example.com');

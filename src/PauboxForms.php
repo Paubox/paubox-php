@@ -5,7 +5,7 @@ use Paubox\Forms\PauboxFormsException;
 
 class PauboxForms
 {
-    const DEFAULT_BASE_URL = "https://apx.paubox.com/forms";
+    const DEFAULT_BASE_URL = "https://api.paubox.com/v1/forms";
     const UUID_PATTERN = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i';
 
     private $baseUrl;
