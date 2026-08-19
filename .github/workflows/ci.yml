@@ -1,9 +1,9 @@
 # Running the tests
 #
 #   composer update
-#   vendor/bin/phpunit                          # offline only, what CI runs
-#   vendor/bin/phpunit --group integration      # needs a live API + real key
-#   vendor/bin/phpunit --group destructive      # WRITES TO LIVE DATA, sends mail
+#   vendor/bin/phpunit                       # offline only, what CI runs
+#   vendor/bin/phpunit --group network       # needs a live API + real key
+#   vendor/bin/phpunit --group mutating      # WRITES TO LIVE DATA, sends mail
 #
 # The last one creates, updates, archives, and copies real forms, injects real
 # submissions, and sends real email against whatever host the SDK points at.
@@ -70,7 +70,9 @@ jobs:
       - name: Lint
         run: find src -name '*.php' -print0 | xargs -0 -n1 -- php -l
 
-      # Offline groups only. See phpunit.xml.dist for why integration and
-      # destructive are excluded.
+      # Offline groups only. phpunit.xml excludes network and mutating.
       - name: PHPUnit
-        run: vendor/bin/phpunit
+        run: vendor/bin/phpunit --log-junit junit.xml
+
+      - name: Assert the suite actually executed
+        run: php .github/scripts/assert_tests_ran.php junit.xml

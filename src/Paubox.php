@@ -6,16 +6,14 @@ class Paubox
 {
     private function getURL($uri)
     {
-        $base_url = "https://api.paubox.net/v1/";
-        $base_url .= \getenv('PAUBOX_API_USER');
-        $base_url .= "/";
+        $base_url = "https://api.paubox.com/v1/email/";
         $base_url .= $uri;
         return $base_url;
     }
-    
+
     private function getAuthentication()
     {
-        $token = "Token token=";
+        $token = "Bearer ";
         $token .= \getenv('PAUBOX_API_KEY');
         return $token;
     }

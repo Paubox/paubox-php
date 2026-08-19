@@ -32,6 +32,9 @@ The API wrapper also allows you to construct and send messages.
     * [Listing submissions](#listing-submissions)
     * [Downloading submissions as CSV](#downloading-submissions-as-csv)
     * [Downloading a submission as PDF](#downloading-a-submission-as-pdf)
+    * [Error handling](#error-handling)
+    * [Requirements](#requirements)
+* [Running the tests](#running-the-tests)
 * [Contributing](#contributing)
 * [License](#license)
 
@@ -56,7 +59,6 @@ Include your API credentials in your environment file.
 
 ```bash
 $ echo "export PAUBOX_API_KEY='YOUR_API_KEY'" > .env
-$ echo "export PAUBOX_API_USER='YOUR_ENDPOINT_NAME'" >> .env
 $ source .env
 $ echo ".env" >> .gitignore
 ```
@@ -309,7 +311,14 @@ $result = $forms->submitForm('YOUR-FORM-UUID', $submission);
 
 ### Scoped API keys
 
-All of the form-management methods below require a Paubox scoped API key with the `forms` scope. Generate one from your Paubox dashboard, then either pass it to the `PauboxForms` constructor or set it in the `PAUBOX_API_KEY` environment variable. The SDK sends it as an `Authorization: Bearer` header.
+All of the form-management methods below require a Paubox scoped API key with the `forms` scope. Generate one from your Paubox dashboard, then either pass it to the `PauboxForms` constructor or set it in the `PAUBOX_FORMS_API_KEY` environment variable. The SDK sends it as an `Authorization: Bearer` header.
+
+**Important:** `PAUBOX_FORMS_API_KEY` is a *different* credential from the transactional Email API key (`PAUBOX_API_KEY`). Do not reuse the same value for both — although both are sent as `Authorization: Bearer` headers to the same host, they are scoped to different APIs: the email client sends `PAUBOX_API_KEY` to `https://api.paubox.com/v1/email`, while `PauboxForms` sends `PAUBOX_FORMS_API_KEY` to `https://api.paubox.com/v1/forms`. Mixing them misdelivers a credential to the wrong endpoint. Configure both independently:
+
+```bash
+echo "export PAUBOX_API_KEY='YOUR_EMAIL_API_KEY'"          >> .env
+echo "export PAUBOX_FORMS_API_KEY='YOUR_FORMS_SCOPED_KEY'" >> .env
+```
 
 ```php
 <?php
@@ -318,11 +327,39 @@ require_once __DIR__ . '/vendor/autoload.php';
 // Option 1: pass the key directly
 $forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY');
 
-// Option 2: use the PAUBOX_API_KEY environment variable
+// Option 2: use the PAUBOX_FORMS_API_KEY environment variable
 $forms = new Paubox\PauboxForms();
 ```
 
-If no key is configured, calling a management method throws an exception. The public `getForm` and `submitForm` methods never require a key.
+Optionally, override the target endpoint with a constructor argument or the `PAUBOX_FORMS_BASE_URL` environment variable. Defaults to `https://api.paubox.com/v1/forms`:
+
+```php
+$forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY', 'https://staging-forms.example.com');
+```
+
+If no key is configured, calling a management method throws a `Paubox\Forms\PauboxFormsException`. The public `getForm` and `submitForm` methods never require a key.
+
+### Error handling
+
+All Forms methods throw `Paubox\Forms\PauboxFormsException` on failure. The exception's message contains the operation and HTTP status only — the raw response body is not included in the message (form submission bodies can contain PHI). Read `getStatusCode()`, `getUrl()`, and `getResponseBody()` explicitly if you need the details:
+
+```php
+try {
+    $forms->updateForm($formId, ['title' => $newTitle]);
+} catch (Paubox\Forms\PauboxFormsException $e) {
+    error_log('Forms update failed: ' . $e->getMessage());
+    // Read the body explicitly — do NOT log $e->getMessage() alone if
+    // the caller might echo the exception unfiltered.
+    if ($e->getStatusCode() === 401) {
+        // handle unauthorized (missing, invalid, or wrong-scope key)
+    }
+}
+```
+
+### Requirements
+
+- PHP 8.1 or newer (older versions cannot install because of an unrelated advisory on the vendored HTTP client).
+- The package pins its HTTP dependency (`nategood/httpful ^1.0`) and enables strict TLS certificate verification.
 
 ### Getting a form by ID
 
@@ -507,6 +544,33 @@ $forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY');
 $pdf = $forms->getSubmissionPdf('YOUR-FORM-UUID', 'SUBMISSION-ID');
 file_put_contents('submission.pdf', $pdf);
 ```
+
+<a name="#running-the-tests"></a>
+## Running the tests
+
+The default test suite is offline and read-only. Requires no credentials, no fixtures, no network:
+
+```bash
+$ vendor/bin/phpunit src/tests/PauboxFormsTest.php
+```
+
+Tests that hit the network or write to a real customer account are separated into groups and excluded by default:
+
+- **`network`** — read-only tests that resolve a real API endpoint (e.g. the public `getForm` 404 path).
+- **`mutating`** — creates, copies, archives, updates, or submits against a real customer. Restores state where possible (`try/finally`), but should never run against a production customer without explicit intent.
+
+To run them:
+
+```bash
+$ export PAUBOX_FORMS_API_KEY='your-scoped-forms-key'
+$ export PAUBOX_FORMS_BASE_URL='https://your-staging-endpoint'   # optional
+$ export QA_TEST_FORM_UUID='...'         # a form on the target customer
+$ export QA_TEST_SUBMISSION_UUID='...'   # a submission on that form
+$ export QA_TEST_CUSTOMER_ID='...'       # numeric customer id owning them
+$ vendor/bin/phpunit --group mutating src/tests/PauboxFormsTest.php
+```
+
+> :warning: The mutating group writes to whatever host `PAUBOX_FORMS_BASE_URL` points at (defaults to production). Every test attempts to restore state in a `finally` block, but a crash between an archive and a restore leaves the form archived — verify the test customer is a QA account before running.
 
 <a name="#contributing"></a>
 ## Contributing

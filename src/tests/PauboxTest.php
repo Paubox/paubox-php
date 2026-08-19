@@ -112,8 +112,8 @@ class PauboxTest extends TestCase
      * Tests PauboxTest->sendMessage()
      *
      * @dataProvider sendMessageDataProvider_Success
-     * @group integration
-     * @group destructive
+     * @group network
+     * @group mutating
      */
     public function testSendMessage_ReturnSuccess(Message $testMsg)
     {
@@ -201,8 +201,8 @@ class PauboxTest extends TestCase
      * Tests EmailService->SendMessage()
      *
      * @dataProvider sendMessageDataProvider_Error
-     * @group integration
-     * @group destructive
+     * @group network
+     * @group mutating
      */
     public function testSendMessage_ReturnError(Message $testMsg)
     {
@@ -254,7 +254,7 @@ class PauboxTest extends TestCase
      * Tests Paubox->getEmailDisposition()
      *
      * @dataProvider getEmailDataProvider_Success
-     * @group integration
+     * @group network
      */
     public function testGetEmailDisposition_ReturnSuccess($sourceTrackingId)
     {
@@ -274,7 +274,7 @@ class PauboxTest extends TestCase
     /**
      *
      * @dataProvider getEmailDataProvider_Error
-     * @group integration
+     * @group network
      */
     public function testGetEmailDisposition_ReturnError($sourceTrackingId)
     {
