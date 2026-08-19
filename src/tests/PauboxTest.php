@@ -44,7 +44,7 @@ class PauboxTest extends TestCase
     public function sendMessageDataProvider_Success()
     {
         $listMessages = array();
-        $csvObj = new CsvFileIterator('.\SendMessage_TestData.csv');
+        $csvObj = new CsvFileIterator(__DIR__ . '/SendMessage_TestData.csv');
         $csvObj->next();
         $csvObj->next(); // Skip headers from csv file
         for (; $csvObj->valid(); $csvObj->next()) {
@@ -112,6 +112,8 @@ class PauboxTest extends TestCase
      * Tests PauboxTest->sendMessage()
      *
      * @dataProvider sendMessageDataProvider_Success
+     * @group network
+     * @group mutating
      */
     public function testSendMessage_ReturnSuccess(Message $testMsg)
     {
@@ -131,7 +133,7 @@ class PauboxTest extends TestCase
     public function sendMessageDataProvider_Error()
     {
         $listMessages = array();
-        $csvObj = new CsvFileIterator('.\SendMessage_TestData.csv');
+        $csvObj = new CsvFileIterator(__DIR__ . '/SendMessage_TestData.csv');
         $csvObj->next();
         $csvObj->next(); // Skip headers from csv file
         for (; $csvObj->valid(); $csvObj->next()) {
@@ -199,6 +201,8 @@ class PauboxTest extends TestCase
      * Tests EmailService->SendMessage()
      *
      * @dataProvider sendMessageDataProvider_Error
+     * @group network
+     * @group mutating
      */
     public function testSendMessage_ReturnError(Message $testMsg)
     {
@@ -250,6 +254,7 @@ class PauboxTest extends TestCase
      * Tests Paubox->getEmailDisposition()
      *
      * @dataProvider getEmailDataProvider_Success
+     * @group network
      */
     public function testGetEmailDisposition_ReturnSuccess($sourceTrackingId)
     {
@@ -269,6 +274,7 @@ class PauboxTest extends TestCase
     /**
      *
      * @dataProvider getEmailDataProvider_Error
+     * @group network
      */
     public function testGetEmailDisposition_ReturnError($sourceTrackingId)
     {

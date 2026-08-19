@@ -8,3 +8,6 @@ vendor
 SendMessage_TestData_*.csv
 composer.lock
 .phpunit.result.cache
+
+# JUnit output written by CI.
+junit.xml

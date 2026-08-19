@@ -7,6 +7,8 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
+         failOnWarning="true"
+         failOnRisky="true"
          stopOnFailure="false">
     <testsuites>
         <testsuite name="Paubox PHP SDK">
