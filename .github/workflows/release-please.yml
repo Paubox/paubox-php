@@ -1,0 +1,105 @@
+name: release-please
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    name: Release Please
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      # Maintains a release PR that writes CHANGELOG.md. Merging that PR creates
+      # the tag and the GitHub release.
+      #
+      # The php strategy touches the changelog and nothing else. composer.json
+      # has no `version` key and must not gain one — Packagist derives versions
+      # from tags, and a hardcoded version would shadow them. The composer
+      # updater only rewrites the key when it already exists, so it is a no-op
+      # here by design.
+      #
+      # include-component-in-tag is false so tags stay bare `vX.Y.Z`. Packagist
+      # requires that form to recognise a tag as a release.
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  verify:
+    name: Verify ${{ needs.release-please.outputs.tag_name }}
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          coverage: none
+          tools: composer:v2
+
+      # --no-check-publish is intentional: it is the check that fails a package
+      # without a `version` key, which is exactly the shape Packagist wants.
+      - name: Validate composer.json
+        run: composer validate --no-check-publish
+
+      - name: Install dependencies
+        run: composer update --no-interaction --no-progress --prefer-dist
+
+      - name: Lint
+        run: find src -name '*.php' -print0 | xargs -0 -n1 -- php -l
+
+      # Offline groups only, matching ci.yml. phpunit.xml excludes the network
+      # and mutating groups; the latter sends real mail and has no teardown.
+      - name: PHPUnit
+        run: vendor/bin/phpunit --log-junit junit.xml
+
+      - name: Assert the suite actually executed
+        run: php .github/scripts/assert_tests_ran.php junit.xml
+
+  notify-packagist:
+    name: Notify Packagist
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      # Packagist has no webhook on this repo, so it only learns about new tags
+      # from its own periodic crawl. That crawl has been unreliable here — it sat
+      # on a June 12 commit for over two months — so a release can be tagged on
+      # GitHub and remain uninstallable via composer indefinitely.
+      #
+      # This ping fixes that, but needs credentials for the Packagist account
+      # that maintains paubox/paubox-php. Until those secrets exist the step
+      # warns and passes rather than failing a release it cannot affect.
+      - name: Trigger a Packagist update
+        env:
+          PACKAGIST_USERNAME: ${{ secrets.PACKAGIST_USERNAME }}
+          PACKAGIST_TOKEN: ${{ secrets.PACKAGIST_TOKEN }}
+        run: |
+          if [ -z "${PACKAGIST_TOKEN}" ] || [ -z "${PACKAGIST_USERNAME}" ]; then
+            echo "::warning title=Packagist not notified::PACKAGIST_USERNAME/PACKAGIST_TOKEN are not set. ${{ needs.release-please.outputs.tag_name }} is tagged on GitHub but Packagist will not serve it until its crawler happens to run. Add the secrets, or trigger an update manually at https://packagist.org/packages/paubox/paubox-php"
+            exit 0
+          fi
+          curl -sS --fail-with-body -XPOST \
+            -H 'content-type:application/json' \
+            "https://packagist.org/api/update-package?username=${PACKAGIST_USERNAME}&apiToken=${PACKAGIST_TOKEN}" \
+            -d '{"repository":{"url":"https://packagist.org/packages/paubox/paubox-php"}}'
+          echo
+          echo "Packagist notified for ${{ needs.release-please.outputs.tag_name }}"

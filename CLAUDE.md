@@ -143,3 +143,23 @@ src/
 | `PAUBOX_FORMS_BASE_URL` | Optional override of the Forms API base URL (defaults to `https://api.paubox.com/v1/forms`) |
 
 Load via `.env` + `vlucas/phpdotenv` or export directly in the shell before running tests.
+
+## Releases
+
+Releases are automated with [release-please](https://github.com/googleapis/release-please). Merging to `master` refreshes a standing release PR; merging *that* PR writes `CHANGELOG.md`, creates a bare `vX.Y.Z` tag, and cuts a GitHub release.
+
+Do **not** hand-edit `CHANGELOG.md` for a release, and do **not** add a `version` key to `composer.json`. Packagist derives versions from tags, and a hardcoded version would shadow them. The `php` release-type only writes the changelog for exactly this reason.
+
+The next version comes from PR titles, so the title is the only thing that matters: `feat:` gives a minor bump, `fix:` a patch, and a `!` suffix or a `BREAKING CHANGE:` footer gives a major. `.github/workflows/pr-title.yml` rejects titles release-please cannot parse.
+
+To force a specific version, land an empty commit carrying a `Release-As` footer:
+
+```bash
+git commit --allow-empty -m "chore: release 1.2.0" -m "Release-As: 1.2.0"
+```
+
+### Packagist
+
+There is **no webhook** on this repo, so Packagist only learns about tags from its own periodic crawl — which has been unreliable, once sitting on a two-month-old commit. A release can therefore be tagged on GitHub and stay uninstallable via `composer require`.
+
+The `notify-packagist` job in `release-please.yml` pings Packagist on each release to close that gap, but it needs `PACKAGIST_USERNAME` and `PACKAGIST_TOKEN` repository secrets for the account that maintains `paubox/paubox-php`. Until those exist the job emits a warning and passes; it never fails a release. Check for that warning after any release, and trigger an update manually at <https://packagist.org/packages/paubox/paubox-php> if it appears.
