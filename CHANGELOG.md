@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [1.2.0](https://github.com/Paubox/paubox-php/compare/v1.1.0...v1.2.0) (2026-08-21)
 
-Not yet on Packagist. The newest published release is still `v1.1.0` from July 2019.
+First release since `v1.1.0` in July 2019.
 
 ### 🚀 New Features
 
@@ -34,13 +34,6 @@ Composer resolves these rather than breaking existing installs — anyone who ca
 
 - Add an Apache 2.0 `LICENSE`
 - Add a CI workflow running PHPUnit and a lint pass on PHP 8.1, 8.2, and 8.3, with the network and mutating test groups excluded from the default run
-
-## [1.2.0](https://github.com/Paubox/paubox-php/compare/v1.1.0...v1.2.0) (2026-08-21)
-
-
-### Miscellaneous Chores
-
-* release 1.2.0 ([c50b800](https://github.com/Paubox/paubox-php/commit/c50b800008dc2253ebf4d737268414bcc36632bb))
 
 ## v1.1.0 / 2019-07-02
 
