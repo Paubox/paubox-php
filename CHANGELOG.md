@@ -35,6 +35,13 @@ Composer resolves these rather than breaking existing installs — anyone who ca
 - Add an Apache 2.0 `LICENSE`
 - Add a CI workflow running PHPUnit and a lint pass on PHP 8.1, 8.2, and 8.3, with the network and mutating test groups excluded from the default run
 
+## [1.2.0](https://github.com/Paubox/paubox-php/compare/v1.1.0...v1.2.0) (2026-08-21)
+
+
+### Miscellaneous Chores
+
+* release 1.2.0 ([c50b800](https://github.com/Paubox/paubox-php/commit/c50b800008dc2253ebf4d737268414bcc36632bb))
+
 ## v1.1.0 / 2019-07-02
 
 ### 🚀 New Features
