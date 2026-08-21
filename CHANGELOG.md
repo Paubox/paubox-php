@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [1.2.0](https://github.com/Paubox/paubox-php/compare/v1.1.0...v1.2.0) (2026-08-21)
 
-Not yet on Packagist. The newest published release is still `v1.1.0` from July 2019.
+First release since `v1.1.0` in July 2019.
 
 ### 🚀 New Features
 
