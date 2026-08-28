@@ -290,4 +290,64 @@ class PauboxTest extends TestCase
             }
         }
     }
+
+    public function scheduleMessageDataProvider()
+    {
+        $message = new Message();
+        $content = new Content();
+        $header = new Header();
+
+        $header->setSubject('Scheduled Test');
+        $header->setFrom(\getenv('PAUBOX_FROM') ?: 'test@example.com');
+        $content->setPlainText('This is a scheduled test message.');
+        $message->setRecipients([\getenv('PAUBOX_TO') ?: 'recipient@example.com']);
+        $message->setHeader($header);
+        $message->setContent($content);
+        $message->setAttachments([]);
+
+        $scheduledAt = gmdate('Y-m-d\TH:i:s\Z', strtotime('+1 hour'));
+
+        return [[$message, $scheduledAt]];
+    }
+
+    /**
+     * @dataProvider scheduleMessageDataProvider
+     * @group network
+     * @group mutating
+     */
+    public function testScheduleMessage_ReturnSuccess(Message $message, $scheduledAt)
+    {
+        $response = $this->paubox->scheduleMessage($message, $scheduledAt);
+        $this->assertNotNull($response);
+        $this->assertNotNull($response->sourceTrackingId);
+        $this->assertEquals('pending', $response->state);
+    }
+
+    /**
+     * @group network
+     */
+    public function testGetScheduledMessage_ReturnError()
+    {
+        $response = $this->paubox->getScheduledMessage('nonexistent-tracking-id');
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @group network
+     */
+    public function testRescheduleMessage_ReturnError()
+    {
+        $newTime = gmdate('Y-m-d\TH:i:s\Z', strtotime('+2 hours'));
+        $response = $this->paubox->rescheduleMessage('nonexistent-tracking-id', $newTime);
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @group network
+     */
+    public function testCancelScheduledMessage_ReturnError()
+    {
+        $response = $this->paubox->cancelScheduledMessage('nonexistent-tracking-id');
+        $this->assertNotNull($response);
+    }
 }
