@@ -130,6 +130,96 @@ class Paubox
         }
         return $sendMessageResponse;
     }
+    public function scheduleMessage(Mail\Message $message, $scheduledAt)
+    {
+        $encodedHtmlText = null;
+        try {
+            $header = $message->getHeader();
+            $content = $message->getContent();
+
+            if ($header == null)
+                throw new \Exception("Message Header cannot be null.");
+            if ($content == null)
+                throw new \Exception("Message Content cannot be null.");
+
+            $jsonAttachmentsArray = array();
+            foreach ($message->getAttachments() as $attachment) {
+                $jsonAttachment = array(
+                    'fileName' => $attachment->getFileName(),
+                    'contentType' => $attachment->getContentType(),
+                    'content' => $attachment->getContent()
+                );
+                array_push($jsonAttachmentsArray, $jsonAttachment);
+            }
+
+            $htmlText = $content->getHtmlText();
+            if (isset($htmlText)) {
+                $encodedHtmlText = base64_encode($htmlText);
+            }
+
+            $forceSecureNotificationValue = Paubox::returnForceSecureNotificationValue($message->getForceSecureNotification());
+
+            $messageData = array(
+                'recipients' => $message->getRecipients(),
+                'cc' => $message->getCc(),
+                'bcc' => $message->getBcc(),
+                'headers' => array(
+                    'subject' => $header->getSubject(),
+                    'from' => $header->getFrom(),
+                    'reply-to' => $header->getReplyTo()
+                ),
+                'allowNonTLS' => $message->isAllowNonTLS(),
+                'content' => array(
+                    'text/plain' => $content->getPlainText(),
+                    'text/html' => $encodedHtmlText
+                ),
+                'attachments' => $jsonAttachmentsArray
+            );
+
+            if (isset($forceSecureNotificationValue)) {
+                $messageData['forceSecureNotification'] = $forceSecureNotificationValue;
+            }
+
+            $jsonRequestData = array(
+                'data' => array(
+                    'message' => $messageData,
+                    'scheduled_at' => $scheduledAt
+                )
+            );
+
+            $api = new Service\ApiHelper();
+            $resp = $api->callToAPIByPost(Paubox::getURL('schedule'), Paubox::getAuthentication(), $jsonRequestData);
+            return json_decode($resp);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function getScheduledMessage($sourceTrackingId)
+    {
+        $api = new Service\ApiHelper();
+        $uri = "schedule/" . $sourceTrackingId;
+        $resp = $api->callToAPIByGet(Paubox::getURL($uri), Paubox::getAuthentication());
+        return json_decode($resp);
+    }
+
+    public function rescheduleMessage($sourceTrackingId, $scheduledAt)
+    {
+        $api = new Service\ApiHelper();
+        $uri = "schedule/" . $sourceTrackingId;
+        $requestBody = array('scheduled_at' => $scheduledAt);
+        $resp = $api->callToAPIByPatch(Paubox::getURL($uri), Paubox::getAuthentication(), $requestBody);
+        return json_decode($resp);
+    }
+
+    public function cancelScheduledMessage($sourceTrackingId)
+    {
+        $api = new Service\ApiHelper();
+        $uri = "schedule/" . $sourceTrackingId . "/cancel";
+        $resp = $api->callToAPIByPost(Paubox::getURL($uri), Paubox::getAuthentication(), array());
+        return json_decode($resp);
+    }
+
     function getEmailDisposition($sourceTrackingId)
     {
         $api = new Service\ApiHelper();
