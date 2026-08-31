@@ -7,7 +7,7 @@ class Errors
     private $title;
     private $details;
     /**
-     * @return $_code
+     * @return mixed
      */
     public function  getCode() {
         return $this->code;
@@ -19,7 +19,7 @@ class Errors
         $this->code = $code;
     }
     /**
-     * @return $_title
+     * @return mixed
      */
     public function getTitle() {
         return $this->title;
@@ -31,7 +31,7 @@ class Errors
         $this->title = $title;
     }
     /**
-     * @return $_details
+     * @return mixed
      */
     public function getDetails() {
         return $this->details;
