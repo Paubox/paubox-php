@@ -57,7 +57,6 @@ class PauboxTest extends TestCase
 
             $content = new Content();
             $header = new Header();
-            $attachment = new Attachment();
 
             $message->setRecipients([
                 $currentObj[1]
@@ -117,7 +116,6 @@ class PauboxTest extends TestCase
      */
     public function testSendMessage_ReturnSuccess(Message $testMsg)
     {
-        $actualResponse = new SendMessageResponse();
         $actualResponse = $this->paubox->sendMessage($testMsg);
         if (! is_null($actualResponse)) {
             if (isset($actualResponse->data) && ! is_null($actualResponse->data) && isset($actualResponse->sourceTrackingId) && ! is_null($actualResponse->sourceTrackingId)) {
@@ -146,7 +144,6 @@ class PauboxTest extends TestCase
 
             $content = new Content();
             $header = new Header();
-            $attachment = new Attachment();
 
             $message->setRecipients([
                 $currentObj[1]
@@ -206,7 +203,6 @@ class PauboxTest extends TestCase
      */
     public function testSendMessage_ReturnError(Message $testMsg)
     {
-        $actualResponse = new SendMessageResponse();
         $actualResponse = $this->paubox->sendMessage($testMsg);
 
         if (! is_null($actualResponse)) {
@@ -258,7 +254,6 @@ class PauboxTest extends TestCase
      */
     public function testGetEmailDisposition_ReturnSuccess($sourceTrackingId)
     {
-        $actualResponse = new GetEmailDispositionResponse();
         $actualResponse = $this->paubox->getEmailDisposition($sourceTrackingId);
         if (is_null($actualResponse) || is_null($actualResponse->data) || is_null($actualResponse->data->message) || is_null($actualResponse->data->message->id)) {
             $this->fail();
@@ -278,7 +273,6 @@ class PauboxTest extends TestCase
      */
     public function testGetEmailDisposition_ReturnError($sourceTrackingId)
     {
-        $actualResponse = new GetEmailDispositionResponse();
         $actualResponse = $this->paubox->getEmailDisposition($sourceTrackingId);
         if (is_null($actualResponse) || is_null($actualResponse->errors) || count($actualResponse->errors) <= 0) {
             $this->fail();
