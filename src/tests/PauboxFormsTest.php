@@ -3,14 +3,12 @@ use PHPUnit\Framework\TestCase;
 use Paubox\PauboxForms;
 use Paubox\Forms\Form;
 use Paubox\Forms\FormSubmission;
-use Paubox\Forms\FormAttachment;
 use Paubox\Forms\PauboxFormsException;
 
 require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 require_once dirname(__DIR__) . "/PauboxForms.php";
 require_once dirname(__DIR__) . "/forms/Form.php";
 require_once dirname(__DIR__) . "/forms/FormSubmission.php";
-require_once dirname(__DIR__) . "/forms/FormAttachment.php";
 require_once dirname(__DIR__) . "/forms/PauboxFormsException.php";
 
 /**
@@ -757,4 +755,3 @@ class PauboxFormsTest extends TestCase
         $this->forms->getSubmissionPdf($formId, '00000000-0000-0000-0000-000000000000');
     }
 }
-?>
