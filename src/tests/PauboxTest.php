@@ -1,7 +1,5 @@
 <?php
 use PHPUnit\Framework\TestCase;
-use Paubox\Mail\GetEmailDispositionResponse;
-use Paubox\Mail\SendMessageResponse;
 use Paubox\Mail\Message;
 use Paubox\Mail\Content;
 use Paubox\Mail\Header;
@@ -9,7 +7,6 @@ use Paubox\Mail\Attachment;
 
 require_once dirname (dirname(__DIR__)) . '/vendor/autoload.php';
 require_once dirname(__DIR__) . "/Paubox.php";
-require_once dirname(__DIR__) . "/mail/SendMessageResponse.php";
 require_once dirname(__DIR__) . "/mail/Message.php";
 require_once dirname(__DIR__) . "/mail/Content.php";
 require_once dirname(__DIR__) . "/mail/Header.php";
