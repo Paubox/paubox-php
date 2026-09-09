@@ -36,92 +36,73 @@ class Paubox
         }
     }
     
+    private function buildMessageData(Mail\Message $message)
+    {
+        $header = $message->getHeader();
+        $content = $message->getContent();
+
+        if ($header == null)
+            throw new \Exception("Message Header cannot be null.");
+        if ($content == null)
+            throw new \Exception("Message Content cannot be null.");
+
+        $jsonAttachmentsArray = array();
+        foreach ($message->getAttachments() as $attachment) {
+            $jsonAttachment = array(
+                'fileName' => $attachment->getFileName(),
+                'contentType' => $attachment->getContentType(),
+                'content' => $attachment->getContent()
+            );
+            array_push($jsonAttachmentsArray, $jsonAttachment);
+        }
+
+        $encodedHtmlText = null;
+        $htmlText = $content->getHtmlText();
+        if (isset($htmlText)) {
+            $encodedHtmlText = base64_encode($htmlText);
+        }
+
+        $messageData = array(
+            'recipients' => $message->getRecipients(),
+            'cc' => $message->getCc(),
+            'bcc' => $message->getBcc(),
+            'headers' => array(
+                'subject' => $header->getSubject(),
+                'from' => $header->getFrom(),
+                'reply-to' => $header->getReplyTo()
+            ),
+            'allowNonTLS' => $message->isAllowNonTLS(),
+            'content' => array(
+                'text/plain' => $content->getPlainText(),
+                'text/html' => $encodedHtmlText
+            ),
+            'attachments' => $jsonAttachmentsArray
+        );
+
+        $forceSecureNotificationValue = Paubox::returnForceSecureNotificationValue($message->getForceSecureNotification());
+        if (isset($forceSecureNotificationValue)) {
+            $messageData['forceSecureNotification'] = $forceSecureNotificationValue;
+        }
+
+        return $messageData;
+    }
+
     public function sendMessage(Mail\Message $message)
     {
-        $encodedHtmlText= null;
         try {
-            $header = $message->getHeader();
-            $content = $message->getContent();
-            $attachment = $message->getAttachments();
-            
-            if ($header == null)
-                throw new \Exception("Message Header cannot be null.");
-            
-            if ($content == null)
-                throw new \Exception("Message Content cannot be null.");
-            $jsonAttachmentsArray = array();
-            foreach ($message->getAttachments() as $attachment) {
-                $jsonAttachment = array(
-                    'fileName' => $attachment->getFileName(),
-                    'contentType' => $attachment->getContentType(),
-                    'content' => $attachment->getContent()
-                );
-                array_push($jsonAttachmentsArray, $jsonAttachment);
-            }
-            
-            $htmlText = $content->getHtmlText();
-            if(isset($htmlText))  // if html text is not null or empty, convert it to base 64 string.
-            {
-                $encodedHtmlText = base64_encode($htmlText);
-            }
-            
-            $forceSecureNotificationValue = Paubox::returnForceSecureNotificationValue($message->getForceSecureNotification());
-            
-            if (isset($forceSecureNotificationValue)) // if $forceSecureNotificationValue is not null or empty, pass forceSecureNotification value in request
-            {
-                $jsonRequestData = array(
-                    'data' => array(
-                        'message' => array(
-                            'recipients' => $message->getRecipients(),
-                            'cc' => $message->getCc(),
-                            'bcc' => $message->getBcc(),
-                            'headers' => array(
-                                'subject' => $header->getSubject(),
-                                'from' => $header->getFrom(),
-                                'reply-to' => $header->getReplyTo()
-                            ),
-                            'allowNonTLS' => $message->isAllowNonTLS(),
-                            'forceSecureNotification' => $forceSecureNotificationValue,
-                            'content' => array(
-                                'text/plain' => $content->getPlainText(),
-                                'text/html' => $encodedHtmlText
-                            ),
-                            'attachments' => $jsonAttachmentsArray
-                        )
-                    )
-                );
-            }
-            else
-            {
-                $jsonRequestData = array(
-                    'data' => array(
-                        'message' => array(
-                            'recipients' => $message->getRecipients(),
-                            'cc' => $message->getCc(),
-                            'bcc' => $message->getBcc(),
-                            'headers' => array(
-                                'subject' => $header->getSubject(),
-                                'from' => $header->getFrom(),
-                                'reply-to' => $header->getReplyTo()
-                            ),
-                            'allowNonTLS' => $message->isAllowNonTLS(),
-                            'content' => array(
-                                'text/plain' => $content->getPlainText(),
-                                'text/html' => $encodedHtmlText
-                            ),
-                            'attachments' => $jsonAttachmentsArray
-                        )
-                    )
-                );
-            }
-            
-            $uri = "messages";
-            
+            $messageData = $this->buildMessageData($message);
+
+            $jsonRequestData = array(
+                'data' => array(
+                    'message' => $messageData
+                )
+            );
+
             $api = new Service\ApiHelper();
-            $resp = $api->callToAPIByPost(Paubox::getURL($uri), Paubox::getAuthentication(), $jsonRequestData);
+            $resp = $api->callToAPIByPost(Paubox::getURL("messages"), Paubox::getAuthentication(), $jsonRequestData);
             $sendMessageResponse = new Mail\SendMessageResponse();
             $sendMessageResponse = json_decode($resp);
-            if (is_null($sendMessageResponse) && is_null($sendMessageResponse->data) && is_null($sendMessageResponse->sourceTrackingId) && is_null($sendMessageResponse->errors)) 
+            if (is_null($sendMessageResponse) && is_null($sendMessageResponse->data) && is_null($sendMessageResponse->sourceTrackingId) && is_null($sendMessageResponse->errors))
             {
                 throw new \Exception($resp);
             }
@@ -130,55 +111,11 @@ class Paubox
         }
         return $sendMessageResponse;
     }
+
     public function scheduleMessage(Mail\Message $message, $scheduledAt)
     {
-        $encodedHtmlText = null;
         try {
-            $header = $message->getHeader();
-            $content = $message->getContent();
-
-            if ($header == null)
-                throw new \Exception("Message Header cannot be null.");
-            if ($content == null)
-                throw new \Exception("Message Content cannot be null.");
-
-            $jsonAttachmentsArray = array();
-            foreach ($message->getAttachments() as $attachment) {
-                $jsonAttachment = array(
-                    'fileName' => $attachment->getFileName(),
-                    'contentType' => $attachment->getContentType(),
-                    'content' => $attachment->getContent()
-                );
-                array_push($jsonAttachmentsArray, $jsonAttachment);
-            }
-
-            $htmlText = $content->getHtmlText();
-            if (isset($htmlText)) {
-                $encodedHtmlText = base64_encode($htmlText);
-            }
-
-            $forceSecureNotificationValue = Paubox::returnForceSecureNotificationValue($message->getForceSecureNotification());
-
-            $messageData = array(
-                'recipients' => $message->getRecipients(),
-                'cc' => $message->getCc(),
-                'bcc' => $message->getBcc(),
-                'headers' => array(
-                    'subject' => $header->getSubject(),
-                    'from' => $header->getFrom(),
-                    'reply-to' => $header->getReplyTo()
-                ),
-                'allowNonTLS' => $message->isAllowNonTLS(),
-                'content' => array(
-                    'text/plain' => $content->getPlainText(),
-                    'text/html' => $encodedHtmlText
-                ),
-                'attachments' => $jsonAttachmentsArray
-            );
-
-            if (isset($forceSecureNotificationValue)) {
-                $messageData['forceSecureNotification'] = $forceSecureNotificationValue;
-            }
+            $messageData = $this->buildMessageData($message);
 
             $jsonRequestData = array(
                 'data' => array(
