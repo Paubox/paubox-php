@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0](https://github.com/Paubox/paubox-php/compare/v1.2.0...v1.3.0) (2026-09-09)
+
+
+### Features
+
+* add scheduled send support ([#23](https://github.com/Paubox/paubox-php/issues/23)) ([63cf771](https://github.com/Paubox/paubox-php/commit/63cf771b048af125eda593d9c491788883d554a0))
+
 ## [1.2.0](https://github.com/Paubox/paubox-php/compare/v1.1.0...v1.2.0) (2026-08-21)
 
 First release since `v1.1.0` in July 2019.
