@@ -89,6 +89,22 @@ class ApiHelper
         return $response->raw_body;
     }
 
+    function callToAPIByDeleteWithResponse($uri, $auth_header)
+    {
+        $header['accept'] = "application/json";
+        if (null != $auth_header) {
+            $header['Authorization'] = $auth_header;
+        }
+
+        $response = \Httpful\Request::delete($uri)->sendsJson()
+            ->addHeaders($header)
+            ->timeout(self::REQUEST_TIMEOUT_SECONDS)
+            ->strictSSL(true)
+            ->send();
+
+        return $response;
+    }
+
     function callToAPIByPutWithResponse($uri, $auth_header, $request_body)
     {
         $header['accept'] = "application/json";
