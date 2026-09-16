@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0](https://github.com/Paubox/paubox-php/compare/v1.3.0...v1.4.0) (2026-09-16)
+
+
+### Features
+
+* add receiving (inbound email) endpoints ([#26](https://github.com/Paubox/paubox-php/issues/26)) ([d8bb001](https://github.com/Paubox/paubox-php/commit/d8bb0013e2726751787a307b06620deb9fd9daec))
+
 ## [1.3.0](https://github.com/Paubox/paubox-php/compare/v1.2.0...v1.3.0) (2026-09-09)
 
 
