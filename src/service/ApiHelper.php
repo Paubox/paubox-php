@@ -121,6 +121,23 @@ class ApiHelper
 
         return $response;
     }
+
+    function callToAPIByPatchWithResponse($uri, $auth_header, $request_body)
+    {
+        $header['accept'] = "application/json";
+        if (null != $auth_header) {
+            $header['Authorization'] = $auth_header;
+        }
+
+        $response = \Httpful\Request::patch($uri)->sendsJson()
+            ->addHeaders($header)
+            ->body($request_body)
+            ->timeout(self::REQUEST_TIMEOUT_SECONDS)
+            ->strictSSL(true)
+            ->send();
+
+        return $response;
+    }
 }
 
 ?>
