@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0](https://github.com/Paubox/paubox-php/compare/v1.4.0...v1.5.0) (2026-09-17)
+
+
+### Features
+
+* webhook endpoint CRUD support ([#28](https://github.com/Paubox/paubox-php/issues/28)) ([9b4a8e3](https://github.com/Paubox/paubox-php/commit/9b4a8e32b909c735a48c2a331b3de0ccc6385d34))
+
 ## [1.4.0](https://github.com/Paubox/paubox-php/compare/v1.3.0...v1.4.0) (2026-09-16)
 
 
