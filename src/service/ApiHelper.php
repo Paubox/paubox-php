@@ -72,6 +72,25 @@ class ApiHelper
         return $response;
     }
 
+    function buildRawGetRequest($uri, $auth_header)
+    {
+        $header['accept'] = "*/*";
+        if (null != $auth_header) {
+            $header['Authorization'] = $auth_header;
+        }
+
+        return \Httpful\Request::get($uri)
+            ->addHeaders($header)
+            ->withoutAutoParsing()
+            ->timeout(self::REQUEST_TIMEOUT_SECONDS)
+            ->strictSSL(true);
+    }
+
+    function callToAPIByGetRawWithResponse($uri, $auth_header)
+    {
+        return $this->buildRawGetRequest($uri, $auth_header)->send();
+    }
+
     function callToAPIByPatch($uri, $auth_header, $request_body)
     {
         $header['accept'] = "application/json";
