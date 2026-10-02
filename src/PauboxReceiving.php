@@ -17,6 +17,11 @@ class PauboxReceiving
         $this->baseUrl = rtrim($resolvedBaseUrl, '/');
     }
 
+    protected function apiHelper()
+    {
+        return new Service\ApiHelper();
+    }
+
     private function getAuthHeader()
     {
         if (empty($this->apiKey)) {
@@ -55,7 +60,7 @@ class PauboxReceiving
 
     public function listReceivingDomains()
     {
-        $api = new Service\ApiHelper();
+        $api = $this->apiHelper();
         $url = $this->baseUrl . "/receiving/domains";
         $response = $api->callToAPIByGetWithResponse($url, $this->getAuthHeader());
         if ($response->code !== 200) {
@@ -70,7 +75,7 @@ class PauboxReceiving
         if (!is_null($slug)) {
             $body = ['slug' => $slug];
         }
-        $api = new Service\ApiHelper();
+        $api = $this->apiHelper();
         $url = $this->baseUrl . "/receiving/domains";
         $response = $api->callToAPIByPostWithResponse($url, $this->getAuthHeader(), $body);
         if ($response->code !== 200 && $response->code !== 201) {
@@ -82,7 +87,7 @@ class PauboxReceiving
     public function getReceivingDomain($id)
     {
         $this->assertId($id, 'id');
-        $api = new Service\ApiHelper();
+        $api = $this->apiHelper();
         $url = $this->baseUrl . "/receiving/domains/" . rawurlencode($id);
         $response = $api->callToAPIByGetWithResponse($url, $this->getAuthHeader());
         if ($response->code !== 200) {
@@ -94,7 +99,7 @@ class PauboxReceiving
     public function deleteReceivingDomain($id)
     {
         $this->assertId($id, 'id');
-        $api = new Service\ApiHelper();
+        $api = $this->apiHelper();
         $url = $this->baseUrl . "/receiving/domains/" . rawurlencode($id);
         $response = $api->callToAPIByDeleteWithResponse($url, $this->getAuthHeader());
         if ($response->code !== 200 && $response->code !== 204) {
@@ -106,7 +111,7 @@ class PauboxReceiving
     public function listMailboxes($domainId)
     {
         $this->assertId($domainId, 'domainId');
-        $api = new Service\ApiHelper();
+        $api = $this->apiHelper();
         $url = $this->baseUrl . "/receiving/domains/" . rawurlencode($domainId) . "/mailboxes";
         $response = $api->callToAPIByGetWithResponse($url, $this->getAuthHeader());
         if ($response->code !== 200) {
@@ -128,7 +133,7 @@ class PauboxReceiving
         if (!is_null($quotaBytes)) {
             $body['quota_bytes'] = $quotaBytes;
         }
-        $api = new Service\ApiHelper();
+        $api = $this->apiHelper();
         $url = $this->baseUrl . "/receiving/domains/" . rawurlencode($domainId) . "/mailboxes";
         $response = $api->callToAPIByPostWithResponse($url, $this->getAuthHeader(), $body);
         if ($response->code !== 200 && $response->code !== 201) {
@@ -141,7 +146,7 @@ class PauboxReceiving
     {
         $this->assertId($domainId, 'domainId');
         $this->assertId($id, 'id');
-        $api = new Service\ApiHelper();
+        $api = $this->apiHelper();
         $url = $this->baseUrl . "/receiving/domains/" . rawurlencode($domainId)
             . "/mailboxes/" . rawurlencode($id);
         $response = $api->callToAPIByGetWithResponse($url, $this->getAuthHeader());
@@ -155,7 +160,7 @@ class PauboxReceiving
     {
         $this->assertId($domainId, 'domainId');
         $this->assertId($id, 'id');
-        $api = new Service\ApiHelper();
+        $api = $this->apiHelper();
         $url = $this->baseUrl . "/receiving/domains/" . rawurlencode($domainId)
             . "/mailboxes/" . rawurlencode($id);
         $response = $api->callToAPIByDeleteWithResponse($url, $this->getAuthHeader());
@@ -167,14 +172,18 @@ class PauboxReceiving
 
     public function listReceivedEmails($params = [])
     {
-        $allowedKeys = ['limit', 'after', 'before'];
+        $allowedKeys = ['limit', 'after', 'before', 'search', 'sort', 'ascending'];
         $query = [];
         foreach ($allowedKeys as $key) {
             if (array_key_exists($key, $params) && !is_null($params[$key])) {
-                $query[$key] = $params[$key];
+                $value = $params[$key];
+                if (is_bool($value)) {
+                    $value = $value ? 'true' : 'false';
+                }
+                $query[$key] = $value;
             }
         }
-        $api = new Service\ApiHelper();
+        $api = $this->apiHelper();
         $url = $this->baseUrl . "/receiving";
         if (!empty($query)) {
             $url .= "?" . http_build_query($query);
@@ -189,7 +198,7 @@ class PauboxReceiving
     public function getReceivedEmail($emailId)
     {
         $this->assertId($emailId, 'emailId');
-        $api = new Service\ApiHelper();
+        $api = $this->apiHelper();
         $url = $this->baseUrl . "/receiving/" . rawurlencode($emailId);
         $response = $api->callToAPIByGetWithResponse($url, $this->getAuthHeader());
         if ($response->code !== 200) {
@@ -198,14 +207,24 @@ class PauboxReceiving
         return json_decode($response->raw_body);
     }
 
-    public function downloadAttachment($emailId, $blobId)
+    public function downloadAttachment($emailId, $attachmentId = null, $blobId = null)
     {
+        if (!is_null($blobId)) {
+            if (!is_null($attachmentId)) {
+                throw new PauboxReceivingException("Pass attachmentId or blobId, not both.");
+            }
+            @trigger_error(
+                'The $blobId parameter of ' . __METHOD__ . '() is deprecated; pass the attachment id as $attachmentId.',
+                E_USER_DEPRECATED
+            );
+            $attachmentId = $blobId;
+        }
         $this->assertId($emailId, 'emailId');
-        $this->assertId($blobId, 'blobId');
-        $api = new Service\ApiHelper();
+        $this->assertId($attachmentId, 'attachmentId');
+        $api = $this->apiHelper();
         $url = $this->baseUrl . "/receiving/" . rawurlencode($emailId)
-            . "/attachments/" . rawurlencode($blobId);
-        $response = $api->callToAPIByGetWithResponse($url, $this->getAuthHeader());
+            . "/attachments/" . rawurlencode($attachmentId);
+        $response = $api->callToAPIByGetRawWithResponse($url, $this->getAuthHeader());
         if ($response->code !== 200) {
             $this->throwHttpError('downloadAttachment', $url, $response);
         }
