@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.1](https://github.com/Paubox/paubox-php/compare/v1.5.0...v1.5.1) (2026-10-02)
+
+
+### Bug Fixes
+
+* **receiving:** key attachment downloads on attachment id and return raw bytes ([#30](https://github.com/Paubox/paubox-php/issues/30)) ([c71ffd1](https://github.com/Paubox/paubox-php/commit/c71ffd14d843136ee390ff2881f94e98d220c3e3))
+
 ## [1.5.0](https://github.com/Paubox/paubox-php/compare/v1.4.0...v1.5.0) (2026-09-17)
 
 
