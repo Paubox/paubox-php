@@ -134,3 +134,177 @@ Maximum request size: **250 MB** (to support file attachments).
 **Throws** `\Exception` on failure:
 - HTTP 400 — `form_data` field is missing
 - HTTP 404 — form not found
+
+---
+
+## Webhooks API (`Paubox\PauboxWebhooks`)
+
+Base URL: `https://api.paubox.com/v1/webhooks`  
+Authentication: `Authorization: Bearer {PAUBOX_WEBHOOKS_API_KEY}`
+
+A webhook endpoint is a URL you own that Paubox notifies when something happens. These methods
+manage those subscriptions: which URL to notify, and for which events.
+
+Every request carries the `/endpoints` resource. The bare base is unrouted on the public gateway
+by design: the rule is scoped to `/endpoints` so the producers' event-ingest route stays private.
+
+The key is read from the constructor or the `PAUBOX_WEBHOOKS_API_KEY` environment variable, and
+the base URL from `PAUBOX_WEBHOOKS_BASE_URL`. Which events a key may subscribe to follows from
+its scopes; the SDK does not inspect them, so an event the key is not scoped for returns 403 and
+an unrecognised one 422.
+
+```php
+$webhooks = new Paubox\PauboxWebhooks('YOUR-SCOPED-API-KEY');
+```
+
+---
+
+### `listWebhookEndpoints(array $params = []): stdClass`
+
+Lists the endpoints this key can act on. Endpoints carrying an event the key is not scoped for
+are filtered out by the service.
+
+**Endpoint:** `GET /endpoints`
+
+**Parameters**
+
+| Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| `page` | int | No | 1-based page number |
+| `items` | int | No | Page size |
+
+Any other key is ignored rather than forwarded.
+
+**Returns** the full document — `data` plus `page_info` — since a caller paginating needs both:
+
+```json
+{
+  "data": [
+    {
+      "id": "2ec66c21-bf48-48eb-8d28-f80b2d6b77c7",
+      "target_url": "https://example.com/paubox-webhook",
+      "status": "active",
+      "events": ["forms.submission.created"],
+      "created_at": "2026-10-09T01:43:41.639968+00:00",
+      "updated_at": "2026-10-09T01:43:41.639968+00:00"
+    }
+  ],
+  "page_info": { "count": 1, "items": 50 }
+}
+```
+
+`page_info->count` is the total number of matching endpoints, not the length of `data`.
+
+---
+
+### `createWebhookEndpoint(array $params): stdClass`
+
+Subscribes a URL to one or more events.
+
+**Endpoint:** `POST /endpoints`
+
+**Parameters**
+
+| Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| `target_url` | string | Yes | An https URL resolving to a publicly routable address |
+| `events` | string[] | Yes | Non-empty list of event names |
+
+**Returns** the endpoint itself, unwrapped from its `data` envelope, carrying `signing_secret`:
+
+```php
+$endpoint = $webhooks->createWebhookEndpoint([
+    'target_url' => 'https://example.com/paubox-webhook',
+    'events'     => ['forms.submission.created'],
+]);
+
+$endpoint->signing_secret; // whsec_...
+```
+
+`signing_secret` is returned **only here**. It is absent from `getWebhookEndpoint` and
+`listWebhookEndpoints` and cannot be read back: recovering from a lost secret means replacing
+the endpoint.
+
+Event names are not validated client-side — the catalog belongs to the service and grows without
+an SDK release.
+
+**Throws** `Paubox\Webhooks\PauboxWebhooksException`:
+- HTTP 422 — missing or malformed `target_url`, an empty `events`, an unrecognised event, or a
+  `target_url` that already has an endpoint
+- HTTP 403 — an event this key is not scoped for
+
+---
+
+### `getWebhookEndpoint(string $id): stdClass`
+
+**Endpoint:** `GET /endpoints/{id}`
+
+**Parameters**
+
+| Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| `$id` | string | Yes | Endpoint UUID |
+
+**Returns** the endpoint, unwrapped from its `data` envelope. The signing secret is not included.
+
+**Throws** `PauboxWebhooksException` with HTTP 404 if no such endpoint exists, or it belongs to
+another account. An id that is not UUID-shaped throws locally, before any request is sent.
+
+---
+
+### `updateWebhookEndpoint(string $id, array $params): stdClass`
+
+A partial update: only the keys present in `$params` are sent, so changing the status leaves the
+URL and events alone.
+
+**Endpoint:** `PATCH /endpoints/{id}`
+
+**Parameters**
+
+| Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| `target_url` | string | No | New delivery target |
+| `status` | string | No | `active` or `disabled` |
+| `events` | string[] | No | Replaces the list rather than adding to it |
+
+At least one key is required.
+
+```php
+$endpoint = $webhooks->updateWebhookEndpoint($id, ['status' => 'disabled']);
+```
+
+`disabled` pauses deliveries without losing the subscription; `active` resumes them.
+
+---
+
+### `deleteWebhookEndpoint(string $id): bool`
+
+**Endpoint:** `DELETE /endpoints/{id}`
+
+**Returns** `true`. The service answers `204 No Content`, so there is no body to decode.
+
+Deleting stops every event on that endpoint and discards its signing secret.
+
+---
+
+### Webhook errors
+
+Every non-2xx response throws `Paubox\Webhooks\PauboxWebhooksException`. The service's own
+message is promoted onto the exception message, since a bare status says nothing about which
+field was wrong:
+
+```php
+use Paubox\Webhooks\PauboxWebhooksException;
+
+try {
+    $webhooks->createWebhookEndpoint($params);
+} catch (PauboxWebhooksException $e) {
+    $e->getStatusCode();   // 422
+    $e->getMessage();      // createWebhookEndpoint failed: HTTP 422: target_url: ...
+    $e->getUrl();
+    $e->getResponseBody(); // raw response
+}
+```
+
+A body that is not JSON leaves the message as just the status, with the raw body still on
+`getResponseBody()`.
