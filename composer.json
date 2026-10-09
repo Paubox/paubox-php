@@ -17,6 +17,7 @@
 			"Paubox\\Mail\\": "src/mail/",
 			"Paubox\\Forms\\": "src/forms/",
 			"Paubox\\Receiving\\": "src/receiving/",
+			"Paubox\\Webhooks\\": "src/webhooks/",
 			"Paubox\\Service\\": "src/service/"
 		}
 	},
