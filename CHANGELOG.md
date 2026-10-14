@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0](https://github.com/Paubox/paubox-php/compare/v1.5.1...v2.0.0) (2026-10-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* manage webhook subscriptions on the Paubox webhooks service ([#32](https://github.com/Paubox/paubox-php/issues/32))
+
+### Features
+
+* manage webhook subscriptions on the Paubox webhooks service ([#32](https://github.com/Paubox/paubox-php/issues/32)) ([0b9cddb](https://github.com/Paubox/paubox-php/commit/0b9cddb673c6083e6fcfbb5dda0ee11112ef9e94))
+
 ## [1.5.1](https://github.com/Paubox/paubox-php/compare/v1.5.0...v1.5.1) (2026-10-02)
 
 
