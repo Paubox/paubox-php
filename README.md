@@ -34,6 +34,13 @@ The API wrapper also allows you to construct and send messages.
     * [Downloading a submission as PDF](#downloading-a-submission-as-pdf)
     * [Error handling](#error-handling)
     * [Requirements](#requirements)
+* [Webhooks](#webhooks)
+  * [Creating a webhook endpoint](#creating-a-webhook-endpoint)
+  * [Listing webhook endpoints](#listing-webhook-endpoints)
+  * [Getting a webhook endpoint](#getting-a-webhook-endpoint)
+  * [Updating a webhook endpoint](#updating-a-webhook-endpoint)
+  * [Deleting a webhook endpoint](#deleting-a-webhook-endpoint)
+  * [Webhook error handling](#webhook-error-handling)
 * [Running the tests](#running-the-tests)
 * [Contributing](#contributing)
 * [License](#license)
@@ -544,6 +551,126 @@ $forms = new Paubox\PauboxForms('YOUR-SCOPED-API-KEY');
 $pdf = $forms->getSubmissionPdf('YOUR-FORM-UUID', 'SUBMISSION-ID');
 file_put_contents('submission.pdf', $pdf);
 ```
+
+<a name="#webhooks"></a>
+## Webhooks
+
+A webhook endpoint is a URL you own that Paubox notifies when something happens. `PauboxWebhooks`
+manages those subscriptions: which URL to notify, and for which events.
+
+Construct it with a **scoped API key**, sent as `Authorization: Bearer <key>`. The key can also
+come from the `PAUBOX_WEBHOOKS_API_KEY` environment variable:
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$webhooks = new Paubox\PauboxWebhooks('YOUR-SCOPED-API-KEY');
+```
+
+Which events a key may subscribe to follows from its scopes. The SDK does not inspect them — the
+service refuses an event the key isn't scoped for with 403, and an unrecognised event with 422.
+
+**Available events**
+
+| Event | Fires when |
+| --- | --- |
+| `forms.submission.created` | A form submission is received |
+| `api_mail_log_delivered` | An Email API message is delivered |
+| `api_mail_log_opened` | A delivered message is opened |
+| `api_mail_log_temporary_failure` | Delivery fails temporarily |
+| `api_mail_log_permanent_failure` | Delivery fails permanently |
+| `email.inbound.received` | Inbound mail is received |
+
+The four Email API events keep their legacy `api_mail_log_` names, so a receiver written
+against the old Email API webhooks keeps working unchanged. Note these are the names on
+the wire: `delivered` or `failed` on their own are rejected as unknown.
+
+The SDK does not check these names. The catalog lives in the service, so an event added
+later works here without upgrading the SDK.
+
+### Creating a webhook endpoint
+
+```php
+$endpoint = $webhooks->createWebhookEndpoint([
+    'target_url' => 'https://example.com/paubox-webhook',
+    'events'     => ['forms.submission.created'],
+]);
+
+echo $endpoint->id;              // UUID
+echo $endpoint->signing_secret;  // whsec_... — store this now
+```
+
+`signing_secret` is returned **once**, here. It is not on `getWebhookEndpoint` or
+`listWebhookEndpoints`, and there is no way to read it back — recovering from a lost secret means
+deleting the endpoint and creating a new one. Use it to verify that deliveries really came from
+Paubox.
+
+### Listing webhook endpoints
+
+```php
+$result = $webhooks->listWebhookEndpoints();
+
+foreach ($result->data as $endpoint) {
+    echo "{$endpoint->id} {$endpoint->target_url} {$endpoint->status}\n";
+}
+
+echo $result->page_info->count;  // total matching, not the length of this page
+```
+
+Pass `page` and `items` to paginate:
+
+```php
+$page2 = $webhooks->listWebhookEndpoints(['page' => 2, 'items' => 25]);
+```
+
+### Getting a webhook endpoint
+
+```php
+$endpoint = $webhooks->getWebhookEndpoint('2ec66c21-bf48-48eb-8d28-f80b2d6b77c7');
+```
+
+### Updating a webhook endpoint
+
+Only the keys you pass are sent, so changing the status leaves the URL and events alone:
+
+```php
+$endpoint = $webhooks->updateWebhookEndpoint($id, ['status' => 'disabled']);
+```
+
+Pausing deliveries without losing the subscription is what `disabled` is for; set `active` to
+resume. Passing `events` replaces the list rather than adding to it.
+
+### Deleting a webhook endpoint
+
+```php
+$webhooks->deleteWebhookEndpoint($id);
+```
+
+Returns `true` — the service answers `204 No Content`. Deleting stops every event on that
+endpoint, and the signing secret goes with it.
+
+### Webhook error handling
+
+A non-2xx response throws `Paubox\Webhooks\PauboxWebhooksException`. The service's own message is
+promoted onto the exception message, since a bare status says nothing about which field was wrong;
+the raw body is on `getResponseBody()`:
+
+```php
+use Paubox\Webhooks\PauboxWebhooksException;
+
+try {
+    $webhooks->createWebhookEndpoint($params);
+} catch (PauboxWebhooksException $e) {
+    echo $e->getStatusCode();    // 422
+    echo $e->getMessage();       // createWebhookEndpoint failed: HTTP 422: target_url: ...
+    echo $e->getResponseBody();  // raw response
+}
+```
+
+Two cases worth handling explicitly: subscribing a `target_url` that already has an endpoint comes
+back as 422, and an id that doesn't belong to your account is a 404 rather than a 403. An id that
+isn't a UUID is rejected locally, before any request is made.
 
 <a name="#running-the-tests"></a>
 ## Running the tests
