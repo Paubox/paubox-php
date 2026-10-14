@@ -153,6 +153,24 @@ the base URL from `PAUBOX_WEBHOOKS_BASE_URL`. Which events a key may subscribe t
 its scopes; the SDK does not inspect them, so an event the key is not scoped for returns 403 and
 an unrecognised one 422.
 
+**Available events**
+
+| Event | Fires when |
+| --- | --- |
+| `forms.submission.created` | A form submission is received |
+| `api_mail_log_delivered` | An Email API message is delivered |
+| `api_mail_log_opened` | A delivered message is opened |
+| `api_mail_log_temporary_failure` | Delivery fails temporarily |
+| `api_mail_log_permanent_failure` | Delivery fails permanently |
+| `email.inbound.received` | Inbound mail is received |
+
+The four Email API events keep their legacy `api_mail_log_` names, so a receiver written
+against the old Email API webhooks keeps working unchanged. Note these are the names on
+the wire: `delivered` or `failed` on their own are rejected as unknown.
+
+The SDK does not check these names. The catalog lives in the service, so an event added
+later works here without upgrading the SDK.
+
 ```php
 $webhooks = new Paubox\PauboxWebhooks('YOUR-SCOPED-API-KEY');
 ```
