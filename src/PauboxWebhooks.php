@@ -69,6 +69,7 @@ class PauboxWebhooks
         if (!is_array($params)) {
             throw new PauboxWebhooksException("params must be an array.");
         }
+        $this->assertKnownKeys($params, ['target_url', 'events']);
         if (!isset($params['target_url']) || !is_string($params['target_url']) || $params['target_url'] === '') {
             throw new PauboxWebhooksException("target_url is required and must be a non-empty string.");
         }
@@ -110,6 +111,7 @@ class PauboxWebhooks
         if (!is_array($params) || empty($params)) {
             throw new PauboxWebhooksException("params must be a non-empty array.");
         }
+        $this->assertKnownKeys($params, ['target_url', 'status', 'events']);
 
         $url = $this->baseUrl . "/endpoints/" . $id;
         $response = $this->apiHelper()->callToAPIByPatchWithResponse($url, $this->getAuthHeader(), $params);
@@ -165,6 +167,21 @@ class PauboxWebhooks
     {
         if (!is_string($value) || !preg_match(self::UUID_PATTERN, $value)) {
             throw new PauboxWebhooksException("$paramName must be a UUID string.");
+        }
+    }
+
+    /**
+     * The service ignores unknown keys, so a typo like 'target_uri' would
+     * otherwise be accepted and do nothing.
+     */
+    private function assertKnownKeys($params, $allowed)
+    {
+        $unknown = array_diff(array_keys($params), $allowed);
+        if (!empty($unknown)) {
+            throw new PauboxWebhooksException(
+                "Unknown params: " . implode(', ', $unknown)
+                . ". Allowed: " . implode(', ', $allowed) . "."
+            );
         }
     }
 
