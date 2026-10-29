@@ -189,6 +189,7 @@ class PauboxWebhooksTest extends TestCase
             'empty target'    => [['target_url' => '', 'events' => ['x']]],
             'no events'       => [['target_url' => 'https://e.test/h']],
             'empty events'    => [['target_url' => 'https://e.test/h', 'events' => []]],
+            'unknown key'     => [['target_url' => 'https://e.test/h', 'events' => ['x'], 'status' => 'active']],
         ];
     }
 
@@ -287,6 +288,19 @@ class PauboxWebhooksTest extends TestCase
         $this->expectException(PauboxWebhooksException::class);
         try {
             $client->updateWebhookEndpoint(self::ENDPOINT_ID, []);
+        } finally {
+            $this->assertEmpty($client->helper->calls);
+        }
+    }
+
+    public function testUpdate_RejectsUnknownKeysBeforeAnyRequest()
+    {
+        $client = $this->client([]);
+
+        $this->expectException(PauboxWebhooksException::class);
+        $this->expectExceptionMessage('Unknown params: target_uri');
+        try {
+            $client->updateWebhookEndpoint(self::ENDPOINT_ID, ['target_uri' => 'https://e.test/h']);
         } finally {
             $this->assertEmpty($client->helper->calls);
         }
