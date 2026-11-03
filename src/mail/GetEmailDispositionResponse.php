@@ -33,7 +33,7 @@ class GetEmailDispositionResponse
     /**
      * @return  $_data
      */
-    public function getData($data) {
+    public function getData() {
         return $this->_data;
     }
     /**
